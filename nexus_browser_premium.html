@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Browser — Революция в веб-серфинге</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: #18181b;
+      --border: #3f3f46;
+      --accent: #fafafa;
+      --accent-muted: #a1a1aa;
+      --neon-cyan: #06b6d4;
+      --neon-red: #ef4444;
+      --font: 'Geologica', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--accent);
+      font-family: var(--font);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    ::selection { background: var(--accent); color: var(--bg); }
+
+    #noise-canvas {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -2; pointer-events: none; opacity: 0.15;
+    }
+    
+    #matrix-canvas { 
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      opacity: 0; z-index: -1; transition: opacity 2s; pointer-events: none;
+    }
+    
+    /* Брутальная сетка */
+    .brutal-grid {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -3; pointer-events: none;
+      animation: panGrid 60s linear infinite;
+    }
+    
+    @keyframes panGrid {
+      0% { background-position: 0 0; }
+      100% { background-position: 100vw 100vh; }
+    }
+
+    .bg-gradient {
+      position: fixed; top: -50%; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 800px; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+      z-index: -3; pointer-events: none;
+    }
+
+    header {
+      position: sticky; top: 0; width: 100%;
+      padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+      background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(12px);
+      border-bottom: 2px solid var(--border); z-index: 100;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--accent);
+      text-transform: uppercase; letter-spacing: -1px; cursor: pointer; user-select: none;
+    }
+
+    .logo-n {
+      width: 40px; height: 40px; background: var(--accent); color: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.5rem; border: 2px solid var(--accent);
+      box-shadow: 4px 4px 0px rgba(255,255,255,0.2); transition: all 0.1s;
+    }
+    .logo:active .logo-n { transform: translate(2px, 2px); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
+
+    .header-actions { display: flex; align-items: center; gap: 20px; }
+
+    /* Языковой селектор */
+    .lang-selector { position: relative; }
+    .lang-btn {
+      background: transparent; border: 2px solid var(--border);
+      color: var(--accent); padding: 8px 16px; font-family: var(--font); font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      text-transform: uppercase; transition: all 0.2s;
+    }
+    .lang-btn:hover { border-color: var(--accent); }
+    
+    .lang-dropdown {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      background: var(--bg); border: 2px solid var(--border);
+      width: 140px; opacity: 0; visibility: hidden; transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 6px 6px 0px rgba(255,255,255,0.05); z-index: 200;
+    }
+    
+    /* Открытое состояние меню */
+    .lang-selector.open .lang-dropdown {
+      opacity: 1; visibility: visible; transform: translateY(0);
+    }
+
+    .lang-dropdown button {
+      display: block; width: 100%; text-align: left; background: none; border: none;
+      padding: 12px 16px; color: var(--accent-muted); font-family: var(--font);
+      font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+    }
+    .lang-dropdown button:hover, .lang-dropdown button.active {
+      color: var(--bg); background: var(--accent);
+    }
+
+    .btn-support {
+      padding: 8px 20px; background: transparent; border: 2px solid var(--accent);
+      color: var(--accent); text-decoration: none; font-weight: 700; text-transform: uppercase;
+      box-shadow: 4px 4px 0px rgba(255,255,255,0.2); transition: all 0.1s;
+    }
+    .btn-support:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
+    .btn-support:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
+
+    .hero {
+      min-height: 85vh; display: flex; flex-direction: column;
+      justify-content: center; padding: 0 5%; position: relative;
+    }
+
+    .hero-badge {
+      display: inline-block; padding: 4px 12px; border: 2px solid var(--border);
+      font-weight: 700; font-size: 0.9rem; margin-bottom: 24px; text-transform: uppercase;
+      background: var(--bg); width: max-content;
+    }
+
+    .hero h1 {
+      font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 800; line-height: 0.9;
+      text-transform: uppercase; letter-spacing: -2px; margin-bottom: 30px;
+      position: relative; max-width: 1000px;
+    }
+    
+    /* Эффект глитча */
+    .glitch-hover:hover {
+      animation: glitch-anim 0.3s linear infinite; color: var(--neon-cyan);
+      text-shadow: 3px 0 var(--neon-red), -3px 0 #fff;
+    }
+    @keyframes glitch-anim {
+      0% { transform: translate(0) }
+      20% { transform: translate(-2px, 2px) }
+      40% { transform: translate(-2px, -2px) }
+      60% { transform: translate(2px, 2px) }
+      80% { transform: translate(2px, -2px) }
+      100% { transform: translate(0) }
+    }
+
+    .hero p {
+      font-size: 1.5rem; color: var(--accent-muted); max-width: 600px;
+      margin-bottom: 50px; font-weight: 400; border-left: 4px solid var(--border); padding-left: 20px;
+    }
+
+    .btn-main {
+      display: inline-flex; align-items: center; gap: 15px;
+      padding: 20px 40px; background: var(--accent); color: var(--bg);
+      text-decoration: none; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
+      border: 2px solid var(--accent); box-shadow: 8px 8px 0px rgba(255,255,255,0.15);
+      transition: all 0.1s; position: relative; overflow: hidden;
+    }
+    .btn-main:hover { transform: translate(-2px, -2px); box-shadow: 10px 10px 0px rgba(255,255,255,0.15); }
+    .btn-main:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0px rgba(255,255,255,0.15); }
+
+    .marquee-container {
+      background: var(--accent); color: var(--bg); padding: 15px 0;
+      overflow: hidden; display: flex; border-top: 2px solid var(--border); border-bottom: 2px solid var(--border);
+      transform: skewY(-2deg); margin: 60px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
+    .marquee-content {
+      display: flex; white-space: nowrap; animation: marquee 20s linear infinite;
+    }
+    .marquee-item { display: flex; align-items: center; gap: 40px; padding: 0 20px; }
+    .marquee-item span { font-weight: 800; font-size: 1.5rem; text-transform: uppercase; }
+    
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    .section { padding: 100px 5%; max-width: 1400px; margin: 0 auto; }
+    .section-header { margin-bottom: 60px; border-bottom: 2px solid var(--border); padding-bottom: 20px;}
+    .section-header h2 { font-size: 3rem; font-weight: 800; text-transform: uppercase; }
+    .section-header p { color: var(--accent-muted); font-size: 1.2rem; margin-top: 10px;}
+
+    .bento-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
+    }
+
+    .bento-card {
+      background: var(--card-bg); border: 2px solid var(--border); padding: 40px;
+      position: relative; transition: all 0.2s ease;
+      box-shadow: 6px 6px 0px rgba(0,0,0,0.5);
+    }
+    .bento-card:hover { border-color: var(--accent); transform: translate(-4px, -4px); box-shadow: 10px 10px 0px rgba(255,255,255,0.1); }
+    
+    .card-icon {
+      margin-bottom: 20px; color: var(--accent);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 64px; height: 64px;
+      padding: 12px; border: 2px solid var(--border); background: var(--bg);
+      box-shadow: 4px 4px 0px rgba(255,255,255,0.1);
+      transition: all 0.2s;
+    }
+    .bento-card:hover .card-icon {
+      box-shadow: 6px 6px 0px rgba(255,255,255,0.2);
+      transform: translate(-2px, -2px);
+    }
+    .card-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .bento-card h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; }
+    .bento-card p { color: var(--accent-muted); font-size: 1.1rem; }
+
+    .donate-box {
+      background: var(--bg); border: 2px dashed var(--border); padding: 50px;
+      text-align: center; margin-top: 50px; transition: border-color 0.3s;
+    }
+    .donate-box:hover { border-color: var(--accent); }
+    .donate-box h3 { font-size: 2rem; margin-bottom: 15px; text-transform: uppercase; }
+    
+    .crypto-address {
+      background: var(--card-bg); border: 1px solid var(--border); padding: 15px;
+      font-family: monospace; color: var(--neon-cyan); margin: 20px auto; max-width: 400px;
+      word-break: break-all; cursor: copy;
+    }
+    .crypto-address:active { background: var(--accent); color: var(--bg); }
+
+    footer {
+      border-top: 2px solid var(--border); padding: 40px 5%; margin-top: 100px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+    }
+    .footer-left { font-weight: 800; font-size: 1.2rem; text-transform: uppercase; }
+    .footer-right { color: var(--accent-muted); font-size: 0.9rem; }
+
+    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    
+    /* Стили для пасхалки (Матрица) */
+    body.matrix-mode {
+      --bg: #000; --card-bg: #001100; --border: #003300; --accent: #00ff00;
+      --accent-muted: #008800; --font: monospace;
+    }
+    body.matrix-mode #matrix-canvas { opacity: 0.3; }
+    body.matrix-mode .brutal-grid { opacity: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Фоновые эффекты -->
+  <div class="brutal-grid"></div>
+  <canvas id="noise-canvas"></canvas>
+  <canvas id="matrix-canvas"></canvas>
+  <div class="bg-gradient"></div>
+
+  <header>
+    <div class="logo" id="logo-btn" title="Click me 5 times...">
+      <div class="logo-n">N</div>
+      <span>Nexus</span>
+    </div>
+    
+    <div class="header-actions">
+      <!-- Сектор выбора языка -->
+      <div class="lang-selector" id="langMenu">
+        <button class="lang-btn" id="langToggleBtn">
+          <span id="currentLangLabel">RU</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="lang-dropdown">
+          <button onclick="setLang('en')">EN - English</button>
+          <button onclick="setLang('ru')">RU - Русский</button>
+          <button onclick="setLang('es')">ES - Español</button>
+          <button onclick="setLang('de')">DE - Deutsch</button>
+          <button onclick="setLang('fr')">FR - Français</button>
+          <button onclick="setLang('zh')">ZH - 中文</button>
+          <button onclick="setLang('ja')">JA - 日本語</button>
+          <button onclick="setLang('pt')">PT - Português</button>
+        </div>
+      </div>
+      <a href="#donate" class="btn-support" data-i18n="nav_support">Поддержать</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-badge reveal" data-i18n="hero_badge">Сборка V14.19</div>
+      <h1 class="glitch-hover reveal" data-i18n="hero_title" style="transition-delay: 0.1s;">Абсолютная чистота.</h1>
+      <p class="reveal" data-i18n="hero_subtitle" style="transition-delay: 0.2s;">Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.</p>
+      
+      <div class="reveal" style="transition-delay: 0.3s;">
+        <!-- Ссылка на файл для скачивания -->
+        <a href="NexusBrowser-Setup.exe" download="NexusBrowser-Setup.exe" class="btn-main">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span data-i18n="hero_btn">Скачать для Windows</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Бегущая строка (Marquee) -->
+    <div class="marquee-container reveal">
+      <div class="marquee-content">
+        <div class="marquee-item">
+          <span data-i18n="mq_telemetry">// ZERO TELEMETRY</span> <span>✦</span>
+          <span data-i18n="mq_adblock">NATIVE ADBLOCK</span> <span>✦</span>
+          <span data-i18n="mq_sponsor">SPONSORBLOCK EMBEDDED</span> <span>✦</span>
+          <span data-i18n="mq_fast">ULTRA FAST RENDER</span> <span>✦</span>
+        </div>
+        <!-- Дубликат для бесшовной анимации -->
+        <div class="marquee-item">
+          <span data-i18n="mq_telemetry">// ZERO TELEMETRY</span> <span>✦</span>
+          <span data-i18n="mq_adblock">NATIVE ADBLOCK</span> <span>✦</span>
+          <span data-i18n="mq_sponsor">SPONSORBLOCK EMBEDDED</span> <span>✦</span>
+          <span data-i18n="mq_fast">ULTRA FAST RENDER</span> <span>✦</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="section" id="features">
+      <div class="section-header reveal">
+        <h2 data-i18n="features_title">Архитектура свободы</h2>
+        <p data-i18n="features_desc">Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек браузера.</p>
+      </div>
+
+      <div class="bento-grid">
+        <div class="bento-card reveal">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <line x1="9" y1="12" x2="15" y2="12"></line>
+            </svg>
+          </div>
+          <h3 data-i18n="feat_adblock_title">Native AdBlock</h3>
+          <p data-i18n="feat_adblock_desc">Реклама блокируется до ее загрузки в оперативную память. Никаких тяжеловесных расширений, только чистая скорость рендеринга.</p>
+        </div>
+        
+        <div class="bento-card reveal" style="transition-delay: 0.1s;">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <h3 data-i18n="feat_telemetry_title">Zero Telemetry</h3>
+          <p data-i18n="feat_telemetry_desc">Весь следящий код и зонды корпораций вырезаны из исходного кода. Мы не знаем, кто вы и что вы ищете.</p>
+        </div>
+
+        <div class="bento-card reveal" style="transition-delay: 0.2s;">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </div>
+          <h3 data-i18n="feat_sponsor_title">SponsorBlock</h3>
+          <p data-i18n="feat_sponsor_desc">Аппаратное распознавание и автоматический пропуск спонсорских интеграций, интро и аутро в видео.</p>
+        </div>
+
+        <div class="bento-card reveal">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+          </div>
+          <h3 data-i18n="feat_ram_title">Оптимизация RAM</h3>
+          <p data-i18n="feat_ram_desc">Интеллектуальное усыпление фоновых вкладок снижает потребление памяти на 40%.</p>
+        </div>
+
+        <div class="bento-card reveal" style="transition-delay: 0.1s; grid-column: span 2;">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+          </div>
+          <h3 data-i18n="feat_ui_title">Минимализм UI</h3>
+          <p data-i18n="feat_ui_desc">Интерфейс, который не отвлекает. Никаких лишних кнопок, панелей и виджетов. Только контент и удобные инструменты разработчика.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="donate">
+      <div class="donate-box reveal">
+        <h3 data-i18n="donate_title">Поддержите проект</h3>
+        <p data-i18n="donate_desc">Nexus разрабатывается независимой командой. Ваша поддержка помогает нам оплачивать серверы и выпускать новые версии без инвесторов.</p>
+        <div class="crypto-address" onclick="navigator.clipboard.writeText('0x1234...ABCD'); alert('Адрес скопирован!')">
+          USDT (TRC20): TYourCryptoAddressHere12345
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-left">Nexus Browser</div>
+    <div class="footer-right">
+      <span data-i18n="footer_rights">Все права защищены.</span> | <span data-i18n="footer_privacy">Политика приватности</span>
+    </div>
+  </footer>
+
+  <script>
+    const dict = {
+      en: {
+        nav_support: "Support Us", hero_badge: "Build V14.19", hero_title: "Absolute Silence.", hero_subtitle: "Browser engineered to eliminate digital noise. Native AdBlock, SponsorBlock bypass, and zero telemetry at the core level.", hero_btn: "Download for Windows", features_title: "Architecture of Freedom", features_desc: "We rewrote the rules by embedding critical tools directly into the network stack.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Ads are blocked before loading into RAM. No heavy extensions, just pure speed.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "All tracking code is stripped from the source code.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Hardware-level auto-skipping of sponsors and intros in videos.", feat_ram_title: "RAM Optimization", feat_ram_desc: "Intelligent tab sleeping reduces memory consumption by 40%.", feat_ui_title: "Minimal UI", feat_ui_desc: "An interface that doesn't distract. Just content.", donate_title: "Support the Project", donate_desc: "Nexus is built by an independent team. Help us pay for servers.", footer_rights: "All rights reserved.", footer_privacy: "Privacy Policy",
+        mq_telemetry: "// ZERO TELEMETRY", mq_adblock: "NATIVE ADBLOCK", mq_sponsor: "SPONSORBLOCK EMBEDDED", mq_fast: "ULTRA FAST RENDER"
+      },
+      ru: {
+        nav_support: "Поддержать", hero_badge: "Сборка V14.19", hero_title: "Абсолютная чистота.", hero_subtitle: "Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.", hero_btn: "Скачать для Windows", features_title: "Архитектура свободы", features_desc: "Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Реклама блокируется до загрузки в оперативную память. Только чистая скорость.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "Весь следящий код и зонды корпораций вырезаны из исходного кода.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Аппаратное распознавание и автоматический пропуск спонсоров в видео.", feat_ram_title: "Оптимизация RAM", feat_ram_desc: "Интеллектуальное усыпление вкладок снижает потребление памяти на 40%.", feat_ui_title: "Минимализм UI", feat_ui_desc: "Интерфейс, который не отвлекает. Только контент.", donate_title: "Поддержите проект", donate_desc: "Nexus разрабатывается независимой командой. Помогите оплачивать серверы.", footer_rights: "Все права защищены.", footer_privacy: "Политика приватности",
+        mq_telemetry: "// НОЛЬ ТЕЛЕМЕТРИИ", mq_adblock: "ВСТРОЕННЫЙ ADBLOCK", mq_sponsor: "SPONSORBLOCK В ЯДРЕ", mq_fast: "СВЕРХБЫСТРЫЙ РЕНДЕР"
+      },
+      es: {
+        nav_support: "Apóyanos", hero_badge: "Versión V14.19", hero_title: "Silencio Absoluto.", hero_subtitle: "Navegador diseñado para eliminar ruido digital. AdBlock nativo y cero telemetría.", hero_btn: "Descargar", features_title: "Arquitectura de Libertad", features_desc: "Herramientas críticas en el núcleo de la red.", feat_adblock_title: "AdBlock Nativo", feat_adblock_desc: "Anuncios bloqueados antes de cargar en RAM.", feat_telemetry_title: "Cero Telemetría", feat_telemetry_desc: "Código de rastreo eliminado.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Salto automático de patrocinios.", feat_ram_title: "Optimización RAM", feat_ram_desc: "Reduce uso en 40%.", feat_ui_title: "UI Minimalista", feat_ui_desc: "Interfaz sin distracciones.", donate_title: "Apoya el Proyecto", donate_desc: "Tu apoyo ayuda a pagar servidores.", footer_rights: "Todos los derechos reservados.", footer_privacy: "Privacidad",
+        mq_telemetry: "// CERO TELEMETRÍA", mq_adblock: "ADBLOCK NATIVO", mq_sponsor: "SPONSORBLOCK INTEGRADO", mq_fast: "RENDERIZADO ULTRARRÁPIDO"
+      },
+      de: {
+        nav_support: "Unterstützen", hero_badge: "Build V14.19", hero_title: "Absolute Stille.", hero_subtitle: "Entwickelt, um digitalen Lärm zu beseitigen. Nativer AdBlock und Null Telemetrie.", hero_btn: "Herunterladen", features_title: "Architektur der Freiheit", features_desc: "Werkzeuge direkt im Netzwerk-Stack integriert.", feat_adblock_title: "Nativer AdBlock", feat_adblock_desc: "Werbung wird vor dem Laden blockiert.", feat_telemetry_title: "Null Telemetrie", feat_telemetry_desc: "Kein Tracking-Code.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Automatisches Überspringen von Sponsoren.", feat_ram_title: "RAM Optimierung", feat_ram_desc: "40% weniger Speicherverbrauch.", feat_ui_title: "Minimales UI", feat_ui_desc: "Ablenkungsfreie Benutzeroberfläche.", donate_title: "Projekt unterstützen", donate_desc: "Unabhängiges Team.", footer_rights: "Alle Rechte vorbehalten.", footer_privacy: "Datenschutz",
+        mq_telemetry: "// NULL TELEMETRIE", mq_adblock: "NATIVER ADBLOCK", mq_sponsor: "SPONSORBLOCK INTEGRIERT", mq_fast: "ULTRASCHNELLES RENDERN"
+      },
+      fr: {
+        nav_support: "Soutenir", hero_badge: "Build V14.19", hero_title: "Silence Absolu.", hero_subtitle: "Conçu pour éliminer le bruit numérique. AdBlock natif et zéro télémétrie.", hero_btn: "Télécharger", features_title: "Architecture de Liberté", features_desc: "Des outils critiques directement dans le noyau.", feat_adblock_title: "AdBlock Natif", feat_adblock_desc: "Bloque les pubs avant la RAM.", feat_telemetry_title: "Zéro Télémétrie", feat_telemetry_desc: "Aucun traceur.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Saut automatique des sponsors.", feat_ram_title: "Optimización RAM", feat_ram_desc: "Économise 40% de mémoire.", feat_ui_title: "UI Minimaliste", feat_ui_desc: "Interface sans distraction.", donate_title: "Soutenir le projet", donate_desc: "Aidez-nous à payer les serveurs.", footer_rights: "Tous droits réservés.", footer_privacy: "Confidentialité",
+        mq_telemetry: "// ZÉRO TÉLÉMÉTRIE", mq_adblock: "ADBLOCK NATIF", mq_sponsor: "SPONSORBLOCK INTÉGRÉ", mq_fast: "RENDU ULTRA RAPIDE"
+      },
+      zh: {
+        nav_support: "支持我们", hero_badge: "版本 V14.19", hero_title: "绝对纯净。", hero_subtitle: "消除数字噪音的浏览器。原生广告拦截，零遥测。", hero_btn: "下载 Windows 版", features_title: "自由的架构", features_desc: "在网络层级嵌入关键工具。", feat_adblock_title: "原生 AdBlock", feat_adblock_desc: "在加载前拦截广告。", feat_telemetry_title: "零遥测", feat_telemetry_desc: "删除所有跟踪代码。", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "自动跳过视频赞助。", feat_ram_title: "内存优化", feat_ram_desc: "降低40%内存占用。", feat_ui_title: "极简 UI", feat_ui_desc: "不分心的界面。", donate_title: "支持项目", donate_desc: "独立团队开发。", footer_rights: "版权所有。", footer_privacy: "隐私政策",
+        mq_telemetry: "// 零遥测", mq_adblock: "原生广告拦截", mq_sponsor: "内置 SPONSORBLOCK", mq_fast: "极速渲染"
+      },
+      ja: {
+        nav_support: "サポート", hero_badge: "ビルド V14.19", hero_title: "絶対的な静寂。", hero_subtitle: "デジタルノイズを排除するために設計されたブラウザ。ゼロ・テレメトリ。", hero_btn: "ダウンロード", features_title: "自由のアーキテクチャ", features_desc: "ネットワークスタックに直接組み込まれたツール。", feat_adblock_title: "ネイティブ AdBlock", feat_adblock_desc: "広告をブロック。", feat_telemetry_title: "ゼロ・テレメトリ", feat_telemetry_desc: "追跡コードを削除。", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "スポンサーをスキップ。", feat_ram_title: "RAMの最適化", feat_ram_desc: "メモリ消費を40%削減。", feat_ui_title: "最小限のUI", feat_ui_desc: "気が散らないUI。", donate_title: "プロジェクトを支援", donate_desc: "独立チームによる開発。", footer_rights: "無断転載禁止。", footer_privacy: "プライバシーポリシー",
+        mq_telemetry: "// ゼロ・テレメトリ", mq_adblock: "ネイティブ ADBLOCK", mq_sponsor: "SPONSORBLOCK 内蔵", mq_fast: "超高速レンダリング"
+      },
+      pt: {
+        nav_support: "Apoiar", hero_badge: "Build V14.19", hero_title: "Silêncio Absoluto.", hero_subtitle: "Navegador projetado para eliminar ruído digital. Zero telemetria.", hero_btn: "Baixar", features_title: "Arquitetura da Liberdade", features_desc: "Ferramentas críticas no núcleo.", feat_adblock_title: "AdBlock Nativo", feat_adblock_desc: "Anúncios bloqueados antes da RAM.", feat_telemetry_title: "Zero Telemetria", feat_telemetry_desc: "Sem código de rastreamento.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Pular patrocínios.", feat_ram_title: "Otimização de RAM", feat_ram_desc: "Reduz o uso de memória.", feat_ui_title: "UI Minimalista", feat_ui_desc: "Interface sem distrações.", donate_title: "Apoie o Projeto", donate_desc: "Ajude-nos a manter os servidores.", footer_rights: "Todos os direitos reservados.", footer_privacy: "Privacidade",
+        mq_telemetry: "// ZERO TELEMETRIA", mq_adblock: "ADBLOCK NATIVO", mq_sponsor: "SPONSORBLOCK EMBUTIDO", mq_fast: "RENDERIZAÇÃO ULTRA RÁPIDA"
+      }
+    };
+
+    function setLang(langCode) {
+      if(!dict[langCode]) langCode = 'en';
+      const t = dict[langCode];
+      
+      // Обновляем тексты
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if(t[key]) el.textContent = t[key];
+      });
+      
+      // Обновляем метку в кнопке
+      document.getElementById('currentLangLabel').textContent = langCode.toUpperCase();
+      
+      // Закрываем меню и обновляем классы активности
+      document.getElementById('langMenu').classList.remove('open');
+      document.querySelectorAll('.lang-dropdown button').forEach(b => b.classList.remove('active'));
+      event?.target?.classList?.add('active');
+    }
+
+    // Авто-определение языка
+    const userLang = (navigator.language || navigator.userLanguage).slice(0, 2);
+    setLang(dict[userLang] ? userLang : 'en');
+
+    // Логика открытия/закрытия меню по клику
+    const langMenu = document.getElementById('langMenu');
+    const langBtn = document.getElementById('langToggleBtn');
+
+    langBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langMenu.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!langMenu.contains(e.target)) {
+        langMenu.classList.remove('open');
+      }
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) {
+          entry.target.classList.add('active');
+        } else {
+          // Убираем класс, когда элемент уходит из зоны видимости
+          entry.target.classList.remove('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    const noiseCanvas = document.getElementById('noise-canvas');
+    const ctxNoise = noiseCanvas.getContext('2d');
+    function drawNoise() {
+      noiseCanvas.width = window.innerWidth;
+      noiseCanvas.height = window.innerHeight;
+      const imgData = ctxNoise.createImageData(noiseCanvas.width, noiseCanvas.height);
+      const data = imgData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const color = Math.random() < 0.5 ? 0 : 255;
+        data[i] = data[i+1] = data[i+2] = color;
+        data[i+3] = 30; // opacity
+      }
+      ctxNoise.putImageData(imgData, 0, 0);
+    }
+    window.addEventListener('resize', drawNoise);
+    drawNoise();
+
+    const matrixCanvas = document.getElementById('matrix-canvas');
+    const ctxMatrix = matrixCanvas.getContext('2d');
+    let matrixInterval;
+    
+    function startMatrix() {
+      matrixCanvas.width = window.innerWidth;
+      matrixCanvas.height = window.innerHeight;
+      const letters = "NEXUS010101XYZ".split("");
+      const fontSize = 16;
+      const columns = matrixCanvas.width / fontSize;
+      const drops = [];
+      for(let x = 0; x < columns; x++) drops[x] = 1;
+
+      if(matrixInterval) clearInterval(matrixInterval);
+      
+      matrixInterval = setInterval(() => {
+        ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctxMatrix.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        ctxMatrix.fillStyle = "#0F0";
+        ctxMatrix.font = fontSize + "px monospace";
+        for(let i = 0; i < drops.length; i++) {
+          const text = letters[Math.floor(Math.random() * letters.length)];
+          ctxMatrix.fillText(text, i * fontSize, drops[i] * fontSize);
+          if(drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }, 33);
+    }
+
+    let clickCount = 0;
+    let clickTimeout;
+    document.getElementById('logo-btn').addEventListener('click', () => {
+      clickCount++;
+      clearTimeout(clickTimeout);
+      if (clickCount >= 5) {
+        document.body.classList.toggle('matrix-mode');
+        if (document.body.classList.contains('matrix-mode')) {
+          startMatrix();
+        } else {
+          clearInterval(matrixInterval);
+        }
+        clickCount = 0;
+      } else {
+        clickTimeout = setTimeout(() => { clickCount = 0; }, 500); // Сброс, если кликать медленно
+      }
+    });
+
+  </script>
+</body>
+</html>

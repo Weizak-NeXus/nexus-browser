@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Nexus Browser — Революция в веб-серфинге</title>
   
+  <!-- Встроенная SVG-фавиконка -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' fill='%23fafafa'/%3E%3Ctext x='32' y='44' font-family='sans-serif' font-weight='900' font-size='38' fill='%2309090b' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -34,15 +36,9 @@
 
     ::selection { background: var(--accent); color: var(--bg); }
 
-    #noise-canvas {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: -2; pointer-events: none; opacity: 0.15;
-    }
-    
-    #matrix-canvas { 
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      opacity: 0; z-index: -1; transition: opacity 2s; pointer-events: none;
-    }
+    /* Фоновые эффекты (Шум, Матрица, Сетка) */
+    #noise-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.15; }
+    #matrix-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; opacity: 0; z-index: -1; transition: opacity 2s; pointer-events: none; }
     
     .brutal-grid {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -65,6 +61,7 @@
       z-index: -3; pointer-events: none;
     }
 
+    /* Шапка сайта */
     header {
       position: sticky; top: 0; width: 100%;
       padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
@@ -88,6 +85,7 @@
 
     .header-actions { display: flex; align-items: center; gap: 15px; }
 
+    /* Выбор языка */
     .lang-selector { position: relative; }
     .lang-btn {
       background: transparent; border: 2px solid var(--border);
@@ -105,29 +103,22 @@
       box-shadow: 6px 6px 0px rgba(255,255,255,0.05); z-index: 200;
     }
     
-    .lang-selector.open .lang-dropdown {
-      opacity: 1; visibility: visible; transform: translateY(0);
-    }
+    .lang-selector.open .lang-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
 
     .lang-dropdown button {
       display: block; width: 100%; text-align: left; background: none; border: none;
       padding: 12px 16px; color: var(--accent-muted); font-family: var(--font);
       font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
     }
-    .lang-dropdown button:hover, .lang-dropdown button.active {
-      color: var(--bg); background: var(--accent);
-    }
+    .lang-dropdown button:hover, .lang-dropdown button.active { color: var(--bg); background: var(--accent); }
 
+    /* Кнопки Поддержать и Войти */
     .btn-support, .btn-account {
       padding: 8px 20px; font-family: var(--font); font-weight: 700; text-transform: uppercase;
       cursor: pointer; transition: all 0.1s; box-shadow: 4px 4px 0px rgba(255,255,255,0.2);
     }
-    .btn-support {
-      background: transparent; border: 2px solid var(--accent); color: var(--accent); text-decoration: none;
-    }
-    .btn-account {
-      background: var(--accent); border: 2px solid var(--accent); color: var(--bg);
-    }
+    .btn-support { background: transparent; border: 2px solid var(--accent); color: var(--accent); text-decoration: none; }
+    .btn-account { background: var(--accent); border: 2px solid var(--accent); color: var(--bg); }
     .btn-support:hover, .btn-account:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
     .btn-support:active, .btn-account:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
 
@@ -143,15 +134,27 @@
       background: var(--card-bg); border: 2px solid var(--accent);
       width: 90%; max-width: 400px; padding: 40px; position: relative;
       box-shadow: 10px 10px 0px rgba(255,255,255,0.1);
-      transform: translateY(20px); transition: all 0.3s;
+      transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .modal-overlay.open .modal-content { transform: translateY(0); }
+    .modal-overlay.open .modal-content { transform: translateY(0) scale(1); }
     
     .modal-close {
       position: absolute; top: 15px; right: 20px; background: none; border: none;
       color: var(--accent-muted); font-size: 1.5rem; cursor: pointer; transition: 0.2s;
     }
     .modal-close:hover { color: var(--neon-red); }
+
+    /* Маскот в модалке авторизации */
+    .mascot-container { width: 90px; height: 90px; margin: 0 auto 20px auto; position: relative; }
+    #mascot-svg { width: 100%; height: 100%; overflow: visible; }
+    .mascot-eye { transition: all 0.3s ease; }
+    .mascot-hand { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; }
+    
+    .mascot-look-down .mascot-eye { transform: translateY(8px); }
+    .mascot-hide-eyes .mascot-hand { opacity: 1; transform: translateY(-38px); }
+    .mascot-peek .mascot-hand.left-hand { opacity: 1; transform: translateY(-38px); }
+    .mascot-peek .mascot-hand.right-hand { opacity: 1; transform: translateY(-20px) rotate(15deg); transform-origin: bottom right; }
+    .mascot-peek .mascot-eye { transform: scale(1.3); fill: var(--neon-cyan); }
     
     .modal-tabs { display: flex; margin-bottom: 25px; border-bottom: 2px solid var(--border); }
     .modal-tab {
@@ -159,15 +162,24 @@
       color: var(--accent-muted); font-family: var(--font); font-weight: 700;
       text-transform: uppercase; cursor: pointer; transition: 0.2s;
     }
-    .modal-tab:hover { color: var(--accent); }
     .modal-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
     
     .auth-form { display: flex; flex-direction: column; gap: 15px; }
+    .input-wrapper { position: relative; width: 100%; }
     .auth-input {
       width: 100%; padding: 12px; background: var(--bg); border: 2px solid var(--border);
       color: var(--accent); font-family: var(--font); outline: none; transition: 0.2s;
     }
     .auth-input:focus { border-color: var(--accent); }
+
+    /* Глазик для пароля */
+    .toggle-password {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--accent-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; padding: 5px; transition: color 0.2s;
+    }
+    .toggle-password:hover { color: var(--accent); }
+    .toggle-password svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     
     .auth-btn {
       padding: 12px; background: var(--accent); color: var(--bg); border: none;
@@ -178,6 +190,22 @@
     
     .auth-msg { text-align: center; font-size: 0.9rem; margin-top: 15px; color: var(--neon-red); min-height: 20px;}
     .auth-msg.success { color: var(--neon-cyan); }
+
+    /* Окно профиля */
+    .profile-info { text-align: center; margin-bottom: 30px; }
+    .profile-avatar {
+      width: 80px; height: 80px; background: var(--accent); color: var(--bg);
+      font-size: 2.5rem; font-weight: 900; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 15px auto; border: 4px solid var(--border); box-shadow: 6px 6px 0px rgba(0,0,0,0.5);
+    }
+    .profile-email { font-size: 1.2rem; font-weight: 700; word-break: break-all; margin-bottom: 5px; }
+    .profile-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.9rem; padding: 4px 10px; background: rgba(6, 182, 212, 0.1); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+    .profile-status.unverified { color: var(--neon-red); border-color: var(--neon-red); background: rgba(239, 68, 68, 0.1); }
+    .btn-logout {
+      width: 100%; padding: 12px; background: transparent; border: 2px solid var(--neon-red);
+      color: var(--neon-red); font-family: var(--font); font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+    }
+    .btn-logout:hover { background: var(--neon-red); color: var(--bg); }
 
     .hero {
       min-height: 85vh; display: flex; flex-direction: column;
@@ -210,7 +238,7 @@
     }
 
     .hero p {
-      font-size: 1.3rem; color: var(--accent-muted); max-width: 600px;
+      font-size: clamp(1.1rem, 3vw, 1.3rem); color: var(--accent-muted); max-width: 600px;
       margin-bottom: 50px; font-weight: 400; border-left: 4px solid var(--border); padding-left: 20px;
     }
 
@@ -230,22 +258,17 @@
       transform: skewY(-2deg); margin: 60px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     
-    .marquee-content {
-      display: flex; white-space: nowrap; animation: marquee 20s linear infinite;
-    }
+    .marquee-content { display: flex; white-space: nowrap; animation: marquee 20s linear infinite; }
     .marquee-item { display: flex; align-items: center; gap: 40px; padding: 0 20px; }
     .marquee-item span { font-weight: 800; font-size: 1.5rem; text-transform: uppercase; }
-    
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
     .section { padding: 100px 5%; max-width: 1400px; margin: 0 auto; }
     .section-header { margin-bottom: 60px; border-bottom: 2px solid var(--border); padding-bottom: 20px;}
-    .section-header h2 { font-size: 3rem; font-weight: 800; text-transform: uppercase; }
+    .section-header h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; text-transform: uppercase; }
     .section-header p { color: var(--accent-muted); font-size: 1.2rem; margin-top: 10px;}
 
-    .bento-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;
-    }
+    .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 
     .bento-card {
       background: var(--card-bg); border: 2px solid var(--border); padding: 40px;
@@ -299,40 +322,32 @@
       header { padding: 12px 20px; }
       .logo { font-size: 1.2rem; gap: 8px; }
       .logo-n { width: 32px; height: 32px; font-size: 1.2rem; }
-      
       .header-actions { gap: 8px; }
       .lang-btn, .btn-support, .btn-account { padding: 8px 12px; font-size: 0.8rem; }
       
       .hero { min-height: auto; padding-top: 60px; padding-bottom: 60px; }
-      .hero h1 { font-size: clamp(2.5rem, 12vw, 4.5rem); margin-bottom: 20px; letter-spacing: -1px; }
-      .hero p { font-size: 1.1rem; margin-bottom: 30px; }
-      
+      .hero h1 { margin-bottom: 20px; letter-spacing: -1px; }
+      .hero p { margin-bottom: 30px; }
       .btn-main { width: 100%; padding: 15px; font-size: 1rem; }
       
       .marquee-container { margin: 30px 0; }
       .marquee-item span { font-size: 1.2rem; }
       
       .section { padding: 60px 5%; }
-      .section-header h2 { font-size: 2.2rem; }
-      .section-header p { font-size: 1rem; }
-      
       .bento-grid { grid-template-columns: 1fr; }
       .bento-card { padding: 25px; }
       .bento-card[style*="grid-column"] { grid-column: auto !important; }
       
       .modal-content { padding: 25px; }
-      
       .donate-box { padding: 30px 15px; }
       .donate-box h3 { font-size: 1.5rem; }
-      
       footer { flex-direction: column; text-align: center; padding: 30px 5%; gap: 10px; }
     }
 
     @media (max-width: 400px) {
-      /* Экстремально маленькие экраны (iPhone SE/7) */
       header { padding: 10px 15px; }
-      .btn-support { display: none; } /* Прячем кнопку доната, чтобы влезли языки и аккаунт */
-      .lang-btn span { display: none; } /* Оставляем только иконку глобуса (стрелочку) */
+      .btn-support { display: none; } /* Прячем донат на мелких экранах для места */
+      .lang-btn span { display: none; } /* Оставляем только иконку */
     }
   </style>
 </head>
@@ -372,6 +387,61 @@
     </div>
   </header>
 
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeAuthModal">&times;</button>
+      
+      <!-- Маскот Робот -->
+      <div class="mascot-container" id="mascot">
+        <svg id="mascot-svg" viewBox="0 0 100 100">
+          <rect x="15" y="15" width="70" height="70" fill="var(--card-bg)" stroke="var(--accent)" stroke-width="4"/>
+          <!-- Глаза -->
+          <rect class="mascot-eye" x="30" y="40" width="10" height="10" fill="var(--accent)"/>
+          <rect class="mascot-eye" x="60" y="40" width="10" height="10" fill="var(--accent)"/>
+          <!-- Рот -->
+          <line x1="35" y1="65" x2="65" y2="65" stroke="var(--accent)" stroke-width="4"/>
+          <!-- Руки (скрыты внизу) -->
+          <rect class="mascot-hand left-hand" x="25" y="85" width="20" height="20" fill="var(--bg)" stroke="var(--accent)" stroke-width="3"/>
+          <rect class="mascot-hand right-hand" x="55" y="85" width="20" height="20" fill="var(--bg)" stroke="var(--accent)" stroke-width="3"/>
+        </svg>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tabLogin" data-i18n="modal_login_tab">Вход</button>
+        <button class="modal-tab" id="tabReg" data-i18n="modal_reg_tab">Регистрация</button>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <div class="input-wrapper">
+          <input type="email" id="authEmail" class="auth-input" data-i18n-ph="modal_email_ph" placeholder="Email" required>
+        </div>
+        <div class="input-wrapper">
+          <input type="password" id="authPwd" class="auth-input" data-i18n-ph="modal_pwd_ph" placeholder="Пароль" required minlength="6">
+          <button type="button" class="toggle-password" id="togglePasswordBtn">
+            <svg id="eye-icon" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          </button>
+        </div>
+        <button type="submit" class="auth-btn" id="authSubmitBtn" data-i18n="modal_btn_login">Войти</button>
+      </form>
+      <div class="auth-msg" id="authMsg"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeProfileModal">&times;</button>
+      <h2 style="margin-bottom: 20px; text-transform: uppercase; text-align: center;" data-i18n="profile_title">Профиль</h2>
+      
+      <div class="profile-info">
+        <div class="profile-avatar" id="profileAvatarLetter">N</div>
+        <div class="profile-email" id="profileEmailDisp">user@email.com</div>
+        <div class="profile-status" id="profileStatusDisp"></div>
+      </div>
+
+      <button class="btn-logout" id="logoutBtn" data-i18n="profile_logout">Выйти из аккаунта</button>
+    </div>
+  </div>
+
   <main>
     <section class="hero">
       <div class="hero-badge reveal" data-i18n="hero_badge">Сборка V14.19</div>
@@ -379,7 +449,6 @@
       <p class="reveal" data-i18n="hero_subtitle" style="transition-delay: 0.2s;">Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.</p>
       
       <div class="reveal" style="transition-delay: 0.3s;">
-        <!-- Ссылка на файл релиза GitHub -->
         <a href="https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/NexusBrowser-Setup.exe" class="btn-main">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span data-i18n="hero_btn">Скачать для Windows</span>
@@ -413,10 +482,7 @@
       <div class="bento-grid">
         <div class="bento-card reveal">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              <line x1="9" y1="12" x2="15" y2="12"></line>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="9" y1="12" x2="15" y2="12"></line></svg>
           </div>
           <h3 data-i18n="feat_adblock_title">Native AdBlock</h3>
           <p data-i18n="feat_adblock_desc">Реклама блокируется до ее загрузки в оперативную память. Никаких тяжеловесных расширений, только чистая скорость рендеринга.</p>
@@ -424,11 +490,7 @@
         
         <div class="bento-card reveal" style="transition-delay: 0.1s;">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
           </div>
           <h3 data-i18n="feat_telemetry_title">Zero Telemetry</h3>
           <p data-i18n="feat_telemetry_desc">Весь следящий код и зонды корпораций вырезаны из исходного кода. Мы не знаем, кто вы и что вы ищете.</p>
@@ -436,10 +498,7 @@
 
         <div class="bento-card reveal" style="transition-delay: 0.2s;">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              <line x1="19" y1="5" x2="19" y2="19"></line>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><polygon points="5 3 19 12 5 21 5 3"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
           </div>
           <h3 data-i18n="feat_sponsor_title">SponsorBlock</h3>
           <p data-i18n="feat_sponsor_desc">Аппаратное распознавание и автоматический пропуск спонсорских интеграций, интро и аутро в видео.</p>
@@ -447,18 +506,7 @@
 
         <div class="bento-card reveal">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-              <rect x="9" y="9" width="6" height="6"></rect>
-              <line x1="9" y1="1" x2="9" y2="4"></line>
-              <line x1="15" y1="1" x2="15" y2="4"></line>
-              <line x1="9" y1="20" x2="9" y2="23"></line>
-              <line x1="15" y1="20" x2="15" y2="23"></line>
-              <line x1="20" y1="9" x2="23" y2="9"></line>
-              <line x1="20" y1="14" x2="23" y2="14"></line>
-              <line x1="1" y1="9" x2="4" y2="9"></line>
-              <line x1="1" y1="14" x2="4" y2="14"></line>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
           </div>
           <h3 data-i18n="feat_ram_title">Оптимизация RAM</h3>
           <p data-i18n="feat_ram_desc">Интеллектуальное усыпление фоновых вкладок снижает потребление памяти на 40%.</p>
@@ -466,11 +514,7 @@
 
         <div class="bento-card reveal" style="transition-delay: 0.1s; grid-column: span 2;">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="3" y1="9" x2="21" y2="9"></line>
-              <line x1="9" y1="21" x2="9" y2="9"></line>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
           </div>
           <h3 data-i18n="feat_ui_title">Минимализм UI</h3>
           <p data-i18n="feat_ui_desc">Интерфейс, который не отвлекает. Никаких лишних кнопок, панелей и виджетов. Только контент и удобные инструменты разработчика.</p>
@@ -489,25 +533,6 @@
     </section>
   </main>
 
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-content">
-      <button class="modal-close" id="closeModal">&times;</button>
-      
-      <div class="modal-tabs">
-        <button class="modal-tab active" id="tabLogin" data-i18n="modal_login_tab">Вход</button>
-        <button class="modal-tab" id="tabReg" data-i18n="modal_reg_tab">Регистрация</button>
-      </div>
-
-      <form class="auth-form" id="authForm">
-        <input type="email" id="authEmail" class="auth-input" data-i18n-ph="modal_email_ph" placeholder="Email" required>
-        <input type="password" id="authPwd" class="auth-input" data-i18n-ph="modal_pwd_ph" placeholder="Пароль" required minlength="6">
-        <button type="submit" class="auth-btn" id="authSubmitBtn" data-i18n="modal_btn_login">Войти</button>
-      </form>
-      
-      <div class="auth-msg" id="authMsg"></div>
-    </div>
-  </div>
-
   <footer>
     <div class="footer-left">Nexus Browser</div>
     <div class="footer-right">
@@ -519,17 +544,17 @@
     const dict = {
       en: {
         nav_support: "Support", nav_login: "Login",
-        modal_login_tab: "Sign In", modal_reg_tab: "Sign Up", modal_email_ph: "Email", modal_pwd_ph: "Password", modal_btn_login: "Sign In", modal_btn_reg: "Create Account",
+        modal_login_tab: "Sign In", modal_reg_tab: "Sign Up", modal_email_ph: "Email", modal_pwd_ph: "Password", modal_btn_login: "Sign In", modal_btn_reg: "Create Account", profile_title: "Profile", profile_logout: "Logout", status_verified: "Verified", status_unverified: "Unverified Email",
         hero_badge: "Build V14.19", hero_title: "Absolute Silence.", hero_subtitle: "Browser engineered to eliminate digital noise. Native AdBlock, SponsorBlock bypass, and zero telemetry.", hero_btn: "Download", features_title: "Architecture of Freedom", features_desc: "We rewrote the rules by embedding critical tools directly into the network stack.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Ads are blocked before loading into RAM.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "All tracking code is stripped.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Hardware-level auto-skipping of sponsors.", feat_ram_title: "RAM Optimization", feat_ram_desc: "Intelligent tab sleeping reduces memory consumption.", feat_ui_title: "Minimal UI", feat_ui_desc: "An interface that doesn't distract.", donate_title: "Support the Project", donate_desc: "Nexus is built by an independent team.", footer_rights: "All rights reserved.", footer_privacy: "Privacy Policy",
         mq_telemetry: "// ZERO TELEMETRY", mq_adblock: "NATIVE ADBLOCK", mq_sponsor: "SPONSORBLOCK EMBEDDED", mq_fast: "ULTRA FAST RENDER"
       },
       ru: {
         nav_support: "Поддержать", nav_login: "Войти",
-        modal_login_tab: "Вход", modal_reg_tab: "Регистрация", modal_email_ph: "Email", modal_pwd_ph: "Пароль", modal_btn_login: "Войти", modal_btn_reg: "Создать аккаунт",
+        modal_login_tab: "Вход", modal_reg_tab: "Регистрация", modal_email_ph: "Email", modal_pwd_ph: "Пароль", modal_btn_login: "Войти", modal_btn_reg: "Создать аккаунт", profile_title: "Профиль", profile_logout: "Выйти из аккаунта", status_verified: "Верифицирован", status_unverified: "Почта не подтверждена",
         hero_badge: "Сборка V14.19", hero_title: "Абсолютная чистота.", hero_subtitle: "Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.", hero_btn: "Скачать для Windows", features_title: "Архитектура свободы", features_desc: "Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Реклама блокируется до загрузки в оперативную память.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "Весь следящий код и зонды корпораций вырезаны из кода.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Аппаратное распознавание и автоматический пропуск спонсоров.", feat_ram_title: "Оптимизация RAM", feat_ram_desc: "Снижает потребление памяти на 40%.", feat_ui_title: "Минимализм UI", feat_ui_desc: "Интерфейс, который не отвлекает. Только контент.", donate_title: "Поддержите проект", donate_desc: "Помогите оплачивать серверы.", footer_rights: "Все права защищены.", footer_privacy: "Политика приватности",
         mq_telemetry: "// НОЛЬ ТЕЛЕМЕТРИИ", mq_adblock: "ВСТРОЕННЫЙ ADBLOCK", mq_sponsor: "SPONSORBLOCK В ЯДРЕ", mq_fast: "СВЕРХБЫСТРЫЙ РЕНДЕР"
       },
-      // Shortened other languages to save space, but logic remains
+      // Short versions for others to keep code clean
       es: { nav_support: "Apoyo", nav_login: "Entrar", hero_btn: "Descargar", mq_telemetry: "// CERO TELEMETRÍA", mq_adblock: "ADBLOCK NATIVO" },
       de: { nav_support: "Spenden", nav_login: "Login", hero_btn: "Download", mq_telemetry: "// NULL TELEMETRIE", mq_adblock: "ADBLOCK" },
       fr: { nav_support: "Soutenir", nav_login: "Connexion", hero_btn: "Télécharger", mq_telemetry: "// ZÉRO TÉLÉMÉTRIE", mq_adblock: "ADBLOCK" },
@@ -538,13 +563,10 @@
       pt: { nav_support: "Apoiar", nav_login: "Entrar", hero_btn: "Baixar", mq_telemetry: "// ZERO TELEMETRIA", mq_adblock: "ADBLOCK" }
     };
 
-    // Глобальная функция смены языка
     window.setLang = function(langCode) {
       if(!dict[langCode]) langCode = 'en';
       const t = dict[langCode];
-      
-      // СОХРАНЕНИЕ ЯЗЫКА (чтобы не слетал при F5)
-      localStorage.setItem('nexus_lang', langCode);
+      localStorage.setItem('nexus_lang', langCode); // Сохраняем язык
       
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -558,15 +580,14 @@
       document.getElementById('currentLangLabel').textContent = langCode.toUpperCase();
       document.getElementById('langMenu').classList.remove('open');
       document.querySelectorAll('.lang-dropdown button').forEach(b => b.classList.remove('active'));
-      event?.target?.classList?.add('active');
+      if(event && event.target) event.target.classList.add('active');
     };
 
-    // АВТООПРЕДЕЛЕНИЕ ИЛИ ВОССТАНОВЛЕНИЕ ЯЗЫКА ИЗ ПАМЯТИ
     const savedLang = localStorage.getItem('nexus_lang');
     const userLang = savedLang || (navigator.language || navigator.userLanguage).slice(0, 2);
     window.setLang(dict[userLang] ? userLang : 'en');
 
-    // UI Menu Logic
+    // UI Меню
     const langMenu = document.getElementById('langMenu');
     document.getElementById('langToggleBtn').addEventListener('click', (e) => {
       e.stopPropagation(); langMenu.classList.toggle('open');
@@ -575,16 +596,16 @@
       if (!langMenu.contains(e.target)) langMenu.classList.remove('open');
     });
 
-    // Observer for reveal animations
+    // Observer появления
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if(entry.isIntersecting) entry.target.classList.add('active');
-        else entry.target.classList.remove('active'); // Позволяет анимации повторяться при скролле
+        else entry.target.classList.remove('active');
       });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Background Canvas Logic
+    // Канвас шума
     const noiseCanvas = document.getElementById('noise-canvas');
     const ctxNoise = noiseCanvas.getContext('2d');
     function drawNoise() {
@@ -592,13 +613,13 @@
       const imgData = ctxNoise.createImageData(noiseCanvas.width, noiseCanvas.height);
       for (let i = 0; i < imgData.data.length; i += 4) {
         const color = Math.random() < 0.5 ? 0 : 255;
-        imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = color;
-        imgData.data[i+3] = 30;
+        imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = color; imgData.data[i+3] = 30;
       }
       ctxNoise.putImageData(imgData, 0, 0);
     }
     window.addEventListener('resize', drawNoise); drawNoise();
 
+    // Канвас матрицы (пасхалка)
     const matrixCanvas = document.getElementById('matrix-canvas');
     const ctxMatrix = matrixCanvas.getContext('2d');
     let matrixInterval;
@@ -628,17 +649,43 @@
         clickCount = 0;
       } else clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
     });
+
+    const mascot = document.getElementById('mascot');
+    const emailInput = document.getElementById('authEmail');
+    const passInput = document.getElementById('authPwd');
+    const togglePassBtn = document.getElementById('togglePasswordBtn');
+    const eyeIconPath = document.querySelector('#eye-icon');
+
+    // Реакции маскота
+    emailInput.addEventListener('focus', () => mascot.classList.add('mascot-look-down'));
+    emailInput.addEventListener('blur', () => mascot.classList.remove('mascot-look-down'));
+
+    passInput.addEventListener('focus', () => {
+      if(passInput.type === 'password') mascot.classList.add('mascot-hide-eyes');
+      else mascot.classList.add('mascot-peek');
+    });
+    passInput.addEventListener('blur', () => {
+      mascot.classList.remove('mascot-hide-eyes', 'mascot-peek');
+    });
+
+    // Переключение пароля
+    togglePassBtn.addEventListener('click', () => {
+      if(passInput.type === 'password') {
+        passInput.type = 'text';
+        mascot.classList.remove('mascot-hide-eyes'); mascot.classList.add('mascot-peek');
+        eyeIconPath.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+      } else {
+        passInput.type = 'password';
+        mascot.classList.remove('mascot-peek'); mascot.classList.add('mascot-hide-eyes');
+        eyeIconPath.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+      }
+    });
   </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-    import { 
-      getAuth, setPersistence, browserLocalPersistence, 
-      createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-      sendEmailVerification, onAuthStateChanged, signOut 
-    } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+    import { getAuth, setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
-    // Настройки из твоего нового проекта
     const firebaseConfig = {
       apiKey: "AIzaSyArDkh4yZudMmov8oLOZmIMY7Kpm1_SODg",
       authDomain: "nexus-a1c0e.firebaseapp.com",
@@ -650,14 +697,16 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    setPersistence(auth, browserLocalPersistence);
 
-    // ВАЖНО: сохраняем сессию в локальной памяти (аккаунт не слетит при F5)
-    setPersistence(auth, browserLocalPersistence).catch(console.error);
-
-    // Логика Модального окна
-    const authBtn = document.getElementById('authBtn');
+    const authBtn = document.getElementById('authBtn'); // Кнопка в шапке
     const authModal = document.getElementById('authModal');
-    const closeBtn = document.getElementById('closeModal');
+    const profileModal = document.getElementById('profileModal');
+    
+    document.getElementById('closeAuthModal').addEventListener('click', () => authModal.classList.remove('open'));
+    document.getElementById('closeProfileModal').addEventListener('click', () => profileModal.classList.remove('open'));
+
+    let isLogin = true;
     const tabLogin = document.getElementById('tabLogin');
     const tabReg = document.getElementById('tabReg');
     const authForm = document.getElementById('authForm');
@@ -666,42 +715,18 @@
     const submitBtn = document.getElementById('authSubmitBtn');
     const authMsg = document.getElementById('authMsg');
 
-    let isLogin = true;
-
-    // Перевод ошибок Firebase
+    // Локализация ошибок Firebase
     function getErrorText(code) {
       const lang = localStorage.getItem('nexus_lang') || 'en';
       const errors = {
-        'auth/invalid-email': { ru: 'Неверный email', en: 'Invalid email' },
-        'auth/email-already-in-use': { ru: 'Email уже занят', en: 'Email taken' },
+        'auth/invalid-email': { ru: 'Неверный формат почты', en: 'Invalid email' },
+        'auth/email-already-in-use': { ru: 'Почта уже занята', en: 'Email taken' },
         'auth/weak-password': { ru: 'Слабый пароль (мин. 6 символов)', en: 'Weak password' },
         'auth/invalid-credential': { ru: 'Неверный логин или пароль', en: 'Invalid credentials' },
-        'auth/api-key-not-valid.': { ru: 'Неверный API ключ Firebase. Проверьте настройки.', en: 'Invalid Firebase API key. Check settings.' },
-        'auth/api-key-not-valid.-please-pass-a-valid-api-key.': { ru: 'Неверный API ключ Firebase. Проверьте настройки.', en: 'Invalid Firebase API key. Check settings.' },
+        'auth/configuration-not-found': { ru: 'Включите вход по почте в Firebase!', en: 'Enable Email Auth in Firebase!' }
       };
-      
-      // Fallback for missing keys that might have extra text
-      if (code && code.includes('api-key-not-valid')) {
-        return (lang === 'ru') ? 'Неверный API ключ Firebase. Проверьте настройки.' : 'Invalid Firebase API key. Check settings.';
-      }
-
       return errors[code] ? (errors[code][lang] || errors[code]['en']) : code;
     }
-
-    authBtn.addEventListener('click', () => {
-      // Если авторизован - предлагаем выйти
-      if(auth.currentUser && auth.currentUser.emailVerified) {
-        if(confirm((localStorage.getItem('nexus_lang') === 'ru') ? 'Выйти из аккаунта?' : 'Log out?')) {
-          signOut(auth);
-        }
-      } else {
-        // Иначе открываем окно
-        authModal.classList.add('open');
-        authMsg.textContent = '';
-      }
-    });
-    
-    closeBtn.addEventListener('click', () => authModal.classList.remove('open'));
 
     function updateTabs() {
       tabLogin.classList.toggle('active', isLogin);
@@ -714,53 +739,67 @@
     tabLogin.addEventListener('click', () => { isLogin = true; updateTabs(); });
     tabReg.addEventListener('click', () => { isLogin = false; updateTabs(); });
 
-    // Обработка Формы (Вход / Регистрация)
+    // Открытие окна в шапке (Авторизация ИЛИ Профиль)
+    authBtn.addEventListener('click', () => {
+      if(auth.currentUser && auth.currentUser.emailVerified) {
+        // Заполнение данных профиля
+        document.getElementById('profileAvatarLetter').textContent = auth.currentUser.email.charAt(0).toUpperCase();
+        document.getElementById('profileEmailDisp').textContent = auth.currentUser.email;
+        const statusDisp = document.getElementById('profileStatusDisp');
+        const lang = localStorage.getItem('nexus_lang') || 'en';
+        
+        statusDisp.className = 'profile-status';
+        statusDisp.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ' + (lang==='ru' ? 'Верифицирован' : 'Verified');
+        
+        profileModal.classList.add('open');
+      } else {
+        authModal.classList.add('open');
+        authMsg.textContent = '';
+      }
+    });
+
+    // Отправка формы (Вход/Рега)
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = emailIn.value.trim();
       const pwd = pwdIn.value;
       authMsg.className = 'auth-msg';
       authMsg.textContent = '...';
+      const lang = localStorage.getItem('nexus_lang') || 'ru';
 
       try {
         if (isLogin) {
-          // ЛОГИН
           const cred = await signInWithEmailAndPassword(auth, email, pwd);
-          
-          // Проверяем подтверждение почты!
           if (!cred.user.emailVerified) {
-            authMsg.textContent = (localStorage.getItem('nexus_lang') === 'ru') 
-              ? 'Почта не подтверждена. Проверьте входящие письма.' 
-              : 'Email not verified. Check your inbox.';
-            await signOut(auth); // Выкидываем, пока не подтвердит
+            authMsg.textContent = lang === 'ru' ? 'Почта не подтверждена. Проверьте письма.' : 'Email not verified. Check inbox.';
+            await signOut(auth);
           } else {
             authModal.classList.remove('open');
             authForm.reset();
           }
         } else {
-          // РЕГИСТРАЦИЯ
           const cred = await createUserWithEmailAndPassword(auth, email, pwd);
-          // Отправка ссылки на почту
           await sendEmailVerification(cred.user);
           authMsg.classList.add('success');
-          authMsg.textContent = (localStorage.getItem('nexus_lang') === 'ru') 
-            ? 'Успешно! Письмо с подтверждением отправлено.' 
-            : 'Success! Verification email sent.';
-          await signOut(auth); // Сразу выходим, ждем подтверждения
+          authMsg.textContent = lang === 'ru' ? 'Успешно! Письмо с подтверждением отправлено.' : 'Success! Verification email sent.';
+          await signOut(auth);
         }
       } catch (error) {
         authMsg.textContent = getErrorText(error.code);
       }
     });
 
-    // Слушатель состояния (меняет кнопку в шапке)
+    // Кнопка выхода в профиле
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      signOut(auth).then(() => profileModal.classList.remove('open'));
+    });
+
+    // Изменение статуса кнопки в шапке
     onAuthStateChanged(auth, (user) => {
       if (user && user.emailVerified) {
-        // Успешный вход
-        authBtn.textContent = user.email.split('@')[0]; // Показываем ник до @
-        authBtn.removeAttribute('data-i18n'); // Убираем перевод
+        authBtn.textContent = user.email.split('@')[0];
+        authBtn.removeAttribute('data-i18n');
       } else {
-        // Выход
         authBtn.setAttribute('data-i18n', 'nav_login');
         window.setLang(localStorage.getItem('nexus_lang') || 'en');
       }

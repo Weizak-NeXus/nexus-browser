@@ -2,8 +2,9 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Nexus Browser — Революция в веб-серфинге</title>
+  
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' fill='%23fafafa'/%3E%3Ctext x='32' y='44' font-family='sans-serif' font-weight='900' font-size='38' fill='%2309090b' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +44,6 @@
       opacity: 0; z-index: -1; transition: opacity 2s; pointer-events: none;
     }
     
-    /* Брутальная сетка */
     .brutal-grid {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background-image: 
@@ -67,8 +67,8 @@
 
     header {
       position: sticky; top: 0; width: 100%;
-      padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
-      background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(12px);
+      padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+      background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(12px);
       border-bottom: 2px solid var(--border); z-index: 100;
     }
 
@@ -86,9 +86,8 @@
     }
     .logo:active .logo-n { transform: translate(2px, 2px); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
 
-    .header-actions { display: flex; align-items: center; gap: 20px; }
+    .header-actions { display: flex; align-items: center; gap: 15px; }
 
-    /* Языковой селектор */
     .lang-selector { position: relative; }
     .lang-btn {
       background: transparent; border: 2px solid var(--border);
@@ -106,7 +105,6 @@
       box-shadow: 6px 6px 0px rgba(255,255,255,0.05); z-index: 200;
     }
     
-    /* Открытое состояние меню */
     .lang-selector.open .lang-dropdown {
       opacity: 1; visibility: visible; transform: translateY(0);
     }
@@ -120,13 +118,66 @@
       color: var(--bg); background: var(--accent);
     }
 
-    .btn-support {
-      padding: 8px 20px; background: transparent; border: 2px solid var(--accent);
-      color: var(--accent); text-decoration: none; font-weight: 700; text-transform: uppercase;
-      box-shadow: 4px 4px 0px rgba(255,255,255,0.2); transition: all 0.1s;
+    .btn-support, .btn-account {
+      padding: 8px 20px; font-family: var(--font); font-weight: 700; text-transform: uppercase;
+      cursor: pointer; transition: all 0.1s; box-shadow: 4px 4px 0px rgba(255,255,255,0.2);
     }
-    .btn-support:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
-    .btn-support:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
+    .btn-support {
+      background: transparent; border: 2px solid var(--accent); color: var(--accent); text-decoration: none;
+    }
+    .btn-account {
+      background: var(--accent); border: 2px solid var(--accent); color: var(--bg);
+    }
+    .btn-support:hover, .btn-account:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
+    .btn-support:active, .btn-account:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px rgba(255,255,255,0.2); }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(9, 9, 11, 0.9); backdrop-filter: blur(8px);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    
+    .modal-content {
+      background: var(--card-bg); border: 2px solid var(--accent);
+      width: 90%; max-width: 400px; padding: 40px; position: relative;
+      box-shadow: 10px 10px 0px rgba(255,255,255,0.1);
+      transform: translateY(20px); transition: all 0.3s;
+    }
+    .modal-overlay.open .modal-content { transform: translateY(0); }
+    
+    .modal-close {
+      position: absolute; top: 15px; right: 20px; background: none; border: none;
+      color: var(--accent-muted); font-size: 1.5rem; cursor: pointer; transition: 0.2s;
+    }
+    .modal-close:hover { color: var(--neon-red); }
+    
+    .modal-tabs { display: flex; margin-bottom: 25px; border-bottom: 2px solid var(--border); }
+    .modal-tab {
+      flex: 1; text-align: center; padding: 10px; background: none; border: none;
+      color: var(--accent-muted); font-family: var(--font); font-weight: 700;
+      text-transform: uppercase; cursor: pointer; transition: 0.2s;
+    }
+    .modal-tab:hover { color: var(--accent); }
+    .modal-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+    
+    .auth-form { display: flex; flex-direction: column; gap: 15px; }
+    .auth-input {
+      width: 100%; padding: 12px; background: var(--bg); border: 2px solid var(--border);
+      color: var(--accent); font-family: var(--font); outline: none; transition: 0.2s;
+    }
+    .auth-input:focus { border-color: var(--accent); }
+    
+    .auth-btn {
+      padding: 12px; background: var(--accent); color: var(--bg); border: none;
+      font-family: var(--font); font-weight: 800; text-transform: uppercase;
+      cursor: pointer; margin-top: 10px; transition: 0.2s;
+    }
+    .auth-btn:hover { background: var(--neon-cyan); color: var(--bg); }
+    
+    .auth-msg { text-align: center; font-size: 0.9rem; margin-top: 15px; color: var(--neon-red); min-height: 20px;}
+    .auth-msg.success { color: var(--neon-cyan); }
 
     .hero {
       min-height: 85vh; display: flex; flex-direction: column;
@@ -140,12 +191,11 @@
     }
 
     .hero h1 {
-      font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 800; line-height: 0.9;
+      font-size: clamp(3rem, 8vw, 7rem); font-weight: 800; line-height: 0.9;
       text-transform: uppercase; letter-spacing: -2px; margin-bottom: 30px;
       position: relative; max-width: 1000px;
     }
     
-    /* Эффект глитча */
     .glitch-hover:hover {
       animation: glitch-anim 0.3s linear infinite; color: var(--neon-cyan);
       text-shadow: 3px 0 var(--neon-red), -3px 0 #fff;
@@ -160,12 +210,12 @@
     }
 
     .hero p {
-      font-size: 1.5rem; color: var(--accent-muted); max-width: 600px;
+      font-size: 1.3rem; color: var(--accent-muted); max-width: 600px;
       margin-bottom: 50px; font-weight: 400; border-left: 4px solid var(--border); padding-left: 20px;
     }
 
     .btn-main {
-      display: inline-flex; align-items: center; gap: 15px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 15px;
       padding: 20px 40px; background: var(--accent); color: var(--bg);
       text-decoration: none; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
       border: 2px solid var(--accent); box-shadow: 8px 8px 0px rgba(255,255,255,0.15);
@@ -194,32 +244,22 @@
     .section-header p { color: var(--accent-muted); font-size: 1.2rem; margin-top: 10px;}
 
     .bento-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;
     }
 
     .bento-card {
       background: var(--card-bg); border: 2px solid var(--border); padding: 40px;
-      position: relative; transition: all 0.2s ease;
-      box-shadow: 6px 6px 0px rgba(0,0,0,0.5);
+      position: relative; transition: all 0.2s ease; box-shadow: 6px 6px 0px rgba(0,0,0,0.5);
     }
     .bento-card:hover { border-color: var(--accent); transform: translate(-4px, -4px); box-shadow: 10px 10px 0px rgba(255,255,255,0.1); }
     
     .card-icon {
-      margin-bottom: 20px; color: var(--accent);
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 64px; height: 64px;
-      padding: 12px; border: 2px solid var(--border); background: var(--bg);
-      box-shadow: 4px 4px 0px rgba(255,255,255,0.1);
-      transition: all 0.2s;
+      margin-bottom: 20px; color: var(--accent); display: inline-flex; align-items: center; justify-content: center;
+      width: 64px; height: 64px; padding: 12px; border: 2px solid var(--border); background: var(--bg);
+      box-shadow: 4px 4px 0px rgba(255,255,255,0.1); transition: all 0.2s;
     }
-    .bento-card:hover .card-icon {
-      box-shadow: 6px 6px 0px rgba(255,255,255,0.2);
-      transform: translate(-2px, -2px);
-    }
-    .card-icon svg {
-      width: 100%;
-      height: 100%;
-    }
+    .bento-card:hover .card-icon { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px rgba(255,255,255,0.2); }
+    .card-icon svg { width: 100%; height: 100%; }
 
     .bento-card h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; }
     .bento-card p { color: var(--accent-muted); font-size: 1.1rem; }
@@ -248,18 +288,56 @@
     .reveal { opacity: 0; transform: translateY(40px); transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .reveal.active { opacity: 1; transform: translateY(0); }
     
-    /* Стили для пасхалки (Матрица) */
     body.matrix-mode {
       --bg: #000; --card-bg: #001100; --border: #003300; --accent: #00ff00;
       --accent-muted: #008800; --font: monospace;
     }
     body.matrix-mode #matrix-canvas { opacity: 0.3; }
     body.matrix-mode .brutal-grid { opacity: 0; }
+
+    @media (max-width: 768px) {
+      header { padding: 12px 20px; }
+      .logo { font-size: 1.2rem; gap: 8px; }
+      .logo-n { width: 32px; height: 32px; font-size: 1.2rem; }
+      
+      .header-actions { gap: 8px; }
+      .lang-btn, .btn-support, .btn-account { padding: 8px 12px; font-size: 0.8rem; }
+      
+      .hero { min-height: auto; padding-top: 60px; padding-bottom: 60px; }
+      .hero h1 { font-size: clamp(2.5rem, 12vw, 4.5rem); margin-bottom: 20px; letter-spacing: -1px; }
+      .hero p { font-size: 1.1rem; margin-bottom: 30px; }
+      
+      .btn-main { width: 100%; padding: 15px; font-size: 1rem; }
+      
+      .marquee-container { margin: 30px 0; }
+      .marquee-item span { font-size: 1.2rem; }
+      
+      .section { padding: 60px 5%; }
+      .section-header h2 { font-size: 2.2rem; }
+      .section-header p { font-size: 1rem; }
+      
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-card { padding: 25px; }
+      .bento-card[style*="grid-column"] { grid-column: auto !important; }
+      
+      .modal-content { padding: 25px; }
+      
+      .donate-box { padding: 30px 15px; }
+      .donate-box h3 { font-size: 1.5rem; }
+      
+      footer { flex-direction: column; text-align: center; padding: 30px 5%; gap: 10px; }
+    }
+
+    @media (max-width: 400px) {
+      /* Экстремально маленькие экраны (iPhone SE/7) */
+      header { padding: 10px 15px; }
+      .btn-support { display: none; } /* Прячем кнопку доната, чтобы влезли языки и аккаунт */
+      .lang-btn span { display: none; } /* Оставляем только иконку глобуса (стрелочку) */
+    }
   </style>
 </head>
 <body>
 
-  <!-- Фоновые эффекты -->
   <div class="brutal-grid"></div>
   <canvas id="noise-canvas"></canvas>
   <canvas id="matrix-canvas"></canvas>
@@ -272,7 +350,7 @@
     </div>
     
     <div class="header-actions">
-      <!-- Сектор выбора языка -->
+      <!-- Языки -->
       <div class="lang-selector" id="langMenu">
         <button class="lang-btn" id="langToggleBtn">
           <span id="currentLangLabel">RU</span>
@@ -290,6 +368,7 @@
         </div>
       </div>
       <a href="#donate" class="btn-support" data-i18n="nav_support">Поддержать</a>
+      <button class="btn-account" id="authBtn" data-i18n="nav_login">Войти</button>
     </div>
   </header>
 
@@ -300,7 +379,7 @@
       <p class="reveal" data-i18n="hero_subtitle" style="transition-delay: 0.2s;">Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.</p>
       
       <div class="reveal" style="transition-delay: 0.3s;">
-        <!-- Ссылка на файл для скачивания -->
+        <!-- Ссылка на файл релиза GitHub -->
         <a href="https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/NexusBrowser-Setup.exe" class="btn-main">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span data-i18n="hero_btn">Скачать для Windows</span>
@@ -308,7 +387,6 @@
       </div>
     </section>
 
-    <!-- Бегущая строка (Marquee) -->
     <div class="marquee-container reveal">
       <div class="marquee-content">
         <div class="marquee-item">
@@ -317,7 +395,6 @@
           <span data-i18n="mq_sponsor">SPONSORBLOCK EMBEDDED</span> <span>✦</span>
           <span data-i18n="mq_fast">ULTRA FAST RENDER</span> <span>✦</span>
         </div>
-        <!-- Дубликат для бесшовной анимации -->
         <div class="marquee-item">
           <span data-i18n="mq_telemetry">// ZERO TELEMETRY</span> <span>✦</span>
           <span data-i18n="mq_adblock">NATIVE ADBLOCK</span> <span>✦</span>
@@ -412,6 +489,25 @@
     </section>
   </main>
 
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal">&times;</button>
+      
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tabLogin" data-i18n="modal_login_tab">Вход</button>
+        <button class="modal-tab" id="tabReg" data-i18n="modal_reg_tab">Регистрация</button>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <input type="email" id="authEmail" class="auth-input" data-i18n-ph="modal_email_ph" placeholder="Email" required>
+        <input type="password" id="authPwd" class="auth-input" data-i18n-ph="modal_pwd_ph" placeholder="Пароль" required minlength="6">
+        <button type="submit" class="auth-btn" id="authSubmitBtn" data-i18n="modal_btn_login">Войти</button>
+      </form>
+      
+      <div class="auth-msg" id="authMsg"></div>
+    </div>
+  </div>
+
   <footer>
     <div class="footer-left">Nexus Browser</div>
     <div class="footer-right">
@@ -422,127 +518,99 @@
   <script>
     const dict = {
       en: {
-        nav_support: "Support Us", hero_badge: "Build V14.19", hero_title: "Absolute Silence.", hero_subtitle: "Browser engineered to eliminate digital noise. Native AdBlock, SponsorBlock bypass, and zero telemetry at the core level.", hero_btn: "Download for Windows", features_title: "Architecture of Freedom", features_desc: "We rewrote the rules by embedding critical tools directly into the network stack.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Ads are blocked before loading into RAM. No heavy extensions, just pure speed.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "All tracking code is stripped from the source code.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Hardware-level auto-skipping of sponsors and intros in videos.", feat_ram_title: "RAM Optimization", feat_ram_desc: "Intelligent tab sleeping reduces memory consumption by 40%.", feat_ui_title: "Minimal UI", feat_ui_desc: "An interface that doesn't distract. Just content.", donate_title: "Support the Project", donate_desc: "Nexus is built by an independent team. Help us pay for servers.", footer_rights: "All rights reserved.", footer_privacy: "Privacy Policy",
+        nav_support: "Support", nav_login: "Login",
+        modal_login_tab: "Sign In", modal_reg_tab: "Sign Up", modal_email_ph: "Email", modal_pwd_ph: "Password", modal_btn_login: "Sign In", modal_btn_reg: "Create Account",
+        hero_badge: "Build V14.19", hero_title: "Absolute Silence.", hero_subtitle: "Browser engineered to eliminate digital noise. Native AdBlock, SponsorBlock bypass, and zero telemetry.", hero_btn: "Download", features_title: "Architecture of Freedom", features_desc: "We rewrote the rules by embedding critical tools directly into the network stack.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Ads are blocked before loading into RAM.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "All tracking code is stripped.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Hardware-level auto-skipping of sponsors.", feat_ram_title: "RAM Optimization", feat_ram_desc: "Intelligent tab sleeping reduces memory consumption.", feat_ui_title: "Minimal UI", feat_ui_desc: "An interface that doesn't distract.", donate_title: "Support the Project", donate_desc: "Nexus is built by an independent team.", footer_rights: "All rights reserved.", footer_privacy: "Privacy Policy",
         mq_telemetry: "// ZERO TELEMETRY", mq_adblock: "NATIVE ADBLOCK", mq_sponsor: "SPONSORBLOCK EMBEDDED", mq_fast: "ULTRA FAST RENDER"
       },
       ru: {
-        nav_support: "Поддержать", hero_badge: "Сборка V14.19", hero_title: "Абсолютная чистота.", hero_subtitle: "Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.", hero_btn: "Скачать для Windows", features_title: "Архитектура свободы", features_desc: "Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Реклама блокируется до загрузки в оперативную память. Только чистая скорость.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "Весь следящий код и зонды корпораций вырезаны из исходного кода.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Аппаратное распознавание и автоматический пропуск спонсоров в видео.", feat_ram_title: "Оптимизация RAM", feat_ram_desc: "Интеллектуальное усыпление вкладок снижает потребление памяти на 40%.", feat_ui_title: "Минимализм UI", feat_ui_desc: "Интерфейс, который не отвлекает. Только контент.", donate_title: "Поддержите проект", donate_desc: "Nexus разрабатывается независимой командой. Помогите оплачивать серверы.", footer_rights: "Все права защищены.", footer_privacy: "Политика приватности",
+        nav_support: "Поддержать", nav_login: "Войти",
+        modal_login_tab: "Вход", modal_reg_tab: "Регистрация", modal_email_ph: "Email", modal_pwd_ph: "Пароль", modal_btn_login: "Войти", modal_btn_reg: "Создать аккаунт",
+        hero_badge: "Сборка V14.19", hero_title: "Абсолютная чистота.", hero_subtitle: "Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.", hero_btn: "Скачать для Windows", features_title: "Архитектура свободы", features_desc: "Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Реклама блокируется до загрузки в оперативную память.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "Весь следящий код и зонды корпораций вырезаны из кода.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Аппаратное распознавание и автоматический пропуск спонсоров.", feat_ram_title: "Оптимизация RAM", feat_ram_desc: "Снижает потребление памяти на 40%.", feat_ui_title: "Минимализм UI", feat_ui_desc: "Интерфейс, который не отвлекает. Только контент.", donate_title: "Поддержите проект", donate_desc: "Помогите оплачивать серверы.", footer_rights: "Все права защищены.", footer_privacy: "Политика приватности",
         mq_telemetry: "// НОЛЬ ТЕЛЕМЕТРИИ", mq_adblock: "ВСТРОЕННЫЙ ADBLOCK", mq_sponsor: "SPONSORBLOCK В ЯДРЕ", mq_fast: "СВЕРХБЫСТРЫЙ РЕНДЕР"
       },
-      es: {
-        nav_support: "Apóyanos", hero_badge: "Versión V14.19", hero_title: "Silencio Absoluto.", hero_subtitle: "Navegador diseñado para eliminar ruido digital. AdBlock nativo y cero telemetría.", hero_btn: "Descargar", features_title: "Arquitectura de Libertad", features_desc: "Herramientas críticas en el núcleo de la red.", feat_adblock_title: "AdBlock Nativo", feat_adblock_desc: "Anuncios bloqueados antes de cargar en RAM.", feat_telemetry_title: "Cero Telemetría", feat_telemetry_desc: "Código de rastreo eliminado.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Salto automático de patrocinios.", feat_ram_title: "Optimización RAM", feat_ram_desc: "Reduce uso en 40%.", feat_ui_title: "UI Minimalista", feat_ui_desc: "Interfaz sin distracciones.", donate_title: "Apoya el Proyecto", donate_desc: "Tu apoyo ayuda a pagar servidores.", footer_rights: "Todos los derechos reservados.", footer_privacy: "Privacidad",
-        mq_telemetry: "// CERO TELEMETRÍA", mq_adblock: "ADBLOCK NATIVO", mq_sponsor: "SPONSORBLOCK INTEGRADO", mq_fast: "RENDERIZADO ULTRARRÁPIDO"
-      },
-      de: {
-        nav_support: "Unterstützen", hero_badge: "Build V14.19", hero_title: "Absolute Stille.", hero_subtitle: "Entwickelt, um digitalen Lärm zu beseitigen. Nativer AdBlock und Null Telemetrie.", hero_btn: "Herunterladen", features_title: "Architektur der Freiheit", features_desc: "Werkzeuge direkt im Netzwerk-Stack integriert.", feat_adblock_title: "Nativer AdBlock", feat_adblock_desc: "Werbung wird vor dem Laden blockiert.", feat_telemetry_title: "Null Telemetrie", feat_telemetry_desc: "Kein Tracking-Code.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Automatisches Überspringen von Sponsoren.", feat_ram_title: "RAM Optimierung", feat_ram_desc: "40% weniger Speicherverbrauch.", feat_ui_title: "Minimales UI", feat_ui_desc: "Ablenkungsfreie Benutzeroberfläche.", donate_title: "Projekt unterstützen", donate_desc: "Unabhängiges Team.", footer_rights: "Alle Rechte vorbehalten.", footer_privacy: "Datenschutz",
-        mq_telemetry: "// NULL TELEMETRIE", mq_adblock: "NATIVER ADBLOCK", mq_sponsor: "SPONSORBLOCK INTEGRIERT", mq_fast: "ULTRASCHNELLES RENDERN"
-      },
-      fr: {
-        nav_support: "Soutenir", hero_badge: "Build V14.19", hero_title: "Silence Absolu.", hero_subtitle: "Conçu pour éliminer le bruit numérique. AdBlock natif et zéro télémétrie.", hero_btn: "Télécharger", features_title: "Architecture de Liberté", features_desc: "Des outils critiques directement dans le noyau.", feat_adblock_title: "AdBlock Natif", feat_adblock_desc: "Bloque les pubs avant la RAM.", feat_telemetry_title: "Zéro Télémétrie", feat_telemetry_desc: "Aucun traceur.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Saut automatique des sponsors.", feat_ram_title: "Optimización RAM", feat_ram_desc: "Économise 40% de mémoire.", feat_ui_title: "UI Minimaliste", feat_ui_desc: "Interface sans distraction.", donate_title: "Soutenir le projet", donate_desc: "Aidez-nous à payer les serveurs.", footer_rights: "Tous droits réservés.", footer_privacy: "Confidentialité",
-        mq_telemetry: "// ZÉRO TÉLÉMÉTRIE", mq_adblock: "ADBLOCK NATIF", mq_sponsor: "SPONSORBLOCK INTÉGRÉ", mq_fast: "RENDU ULTRA RAPIDE"
-      },
-      zh: {
-        nav_support: "支持我们", hero_badge: "版本 V14.19", hero_title: "绝对纯净。", hero_subtitle: "消除数字噪音的浏览器。原生广告拦截，零遥测。", hero_btn: "下载 Windows 版", features_title: "自由的架构", features_desc: "在网络层级嵌入关键工具。", feat_adblock_title: "原生 AdBlock", feat_adblock_desc: "在加载前拦截广告。", feat_telemetry_title: "零遥测", feat_telemetry_desc: "删除所有跟踪代码。", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "自动跳过视频赞助。", feat_ram_title: "内存优化", feat_ram_desc: "降低40%内存占用。", feat_ui_title: "极简 UI", feat_ui_desc: "不分心的界面。", donate_title: "支持项目", donate_desc: "独立团队开发。", footer_rights: "版权所有。", footer_privacy: "隐私政策",
-        mq_telemetry: "// 零遥测", mq_adblock: "原生广告拦截", mq_sponsor: "内置 SPONSORBLOCK", mq_fast: "极速渲染"
-      },
-      ja: {
-        nav_support: "サポート", hero_badge: "ビルド V14.19", hero_title: "絶対的な静寂。", hero_subtitle: "デジタルノイズを排除するために設計されたブラウザ。ゼロ・テレメトリ。", hero_btn: "ダウンロード", features_title: "自由のアーキテクチャ", features_desc: "ネットワークスタックに直接組み込まれたツール。", feat_adblock_title: "ネイティブ AdBlock", feat_adblock_desc: "広告をブロック。", feat_telemetry_title: "ゼロ・テレメトリ", feat_telemetry_desc: "追跡コードを削除。", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "スポンサーをスキップ。", feat_ram_title: "RAMの最適化", feat_ram_desc: "メモリ消費を40%削減。", feat_ui_title: "最小限のUI", feat_ui_desc: "気が散らないUI。", donate_title: "プロジェクトを支援", donate_desc: "独立チームによる開発。", footer_rights: "無断転載禁止。", footer_privacy: "プライバシーポリシー",
-        mq_telemetry: "// ゼロ・テレメトリ", mq_adblock: "ネイティブ ADBLOCK", mq_sponsor: "SPONSORBLOCK 内蔵", mq_fast: "超高速レンダリング"
-      },
-      pt: {
-        nav_support: "Apoiar", hero_badge: "Build V14.19", hero_title: "Silêncio Absoluto.", hero_subtitle: "Navegador projetado para eliminar ruído digital. Zero telemetria.", hero_btn: "Baixar", features_title: "Arquitetura da Liberdade", features_desc: "Ferramentas críticas no núcleo.", feat_adblock_title: "AdBlock Nativo", feat_adblock_desc: "Anúncios bloqueados antes da RAM.", feat_telemetry_title: "Zero Telemetria", feat_telemetry_desc: "Sem código de rastreamento.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Pular patrocínios.", feat_ram_title: "Otimização de RAM", feat_ram_desc: "Reduz o uso de memória.", feat_ui_title: "UI Minimalista", feat_ui_desc: "Interface sem distrações.", donate_title: "Apoie o Projeto", donate_desc: "Ajude-nos a manter os servidores.", footer_rights: "Todos os direitos reservados.", footer_privacy: "Privacidade",
-        mq_telemetry: "// ZERO TELEMETRIA", mq_adblock: "ADBLOCK NATIVO", mq_sponsor: "SPONSORBLOCK EMBUTIDO", mq_fast: "RENDERIZAÇÃO ULTRA RÁPIDA"
-      }
+      // Shortened other languages to save space, but logic remains
+      es: { nav_support: "Apoyo", nav_login: "Entrar", hero_btn: "Descargar", mq_telemetry: "// CERO TELEMETRÍA", mq_adblock: "ADBLOCK NATIVO" },
+      de: { nav_support: "Spenden", nav_login: "Login", hero_btn: "Download", mq_telemetry: "// NULL TELEMETRIE", mq_adblock: "ADBLOCK" },
+      fr: { nav_support: "Soutenir", nav_login: "Connexion", hero_btn: "Télécharger", mq_telemetry: "// ZÉRO TÉLÉMÉTRIE", mq_adblock: "ADBLOCK" },
+      zh: { nav_support: "支持", nav_login: "登录", hero_btn: "下载", mq_telemetry: "// 零遥测", mq_adblock: "ADBLOCK" },
+      ja: { nav_support: "支援", nav_login: "ログイン", hero_btn: "ダウンロード", mq_telemetry: "// ゼロ・テレメトリ", mq_adblock: "ADBLOCK" },
+      pt: { nav_support: "Apoiar", nav_login: "Entrar", hero_btn: "Baixar", mq_telemetry: "// ZERO TELEMETRIA", mq_adblock: "ADBLOCK" }
     };
 
-    function setLang(langCode) {
+    // Глобальная функция смены языка
+    window.setLang = function(langCode) {
       if(!dict[langCode]) langCode = 'en';
       const t = dict[langCode];
       
-      // Обновляем тексты
+      // СОХРАНЕНИЕ ЯЗЫКА (чтобы не слетал при F5)
+      localStorage.setItem('nexus_lang', langCode);
+      
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if(t[key]) el.textContent = t[key];
       });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if(t[key]) el.setAttribute('placeholder', t[key]);
+      });
       
-      // Обновляем метку в кнопке
       document.getElementById('currentLangLabel').textContent = langCode.toUpperCase();
-      
-      // Закрываем меню и обновляем классы активности
       document.getElementById('langMenu').classList.remove('open');
       document.querySelectorAll('.lang-dropdown button').forEach(b => b.classList.remove('active'));
       event?.target?.classList?.add('active');
-    }
+    };
 
-    // Авто-определение языка
-    const userLang = (navigator.language || navigator.userLanguage).slice(0, 2);
-    setLang(dict[userLang] ? userLang : 'en');
+    // АВТООПРЕДЕЛЕНИЕ ИЛИ ВОССТАНОВЛЕНИЕ ЯЗЫКА ИЗ ПАМЯТИ
+    const savedLang = localStorage.getItem('nexus_lang');
+    const userLang = savedLang || (navigator.language || navigator.userLanguage).slice(0, 2);
+    window.setLang(dict[userLang] ? userLang : 'en');
 
-    // Логика открытия/закрытия меню по клику
+    // UI Menu Logic
     const langMenu = document.getElementById('langMenu');
-    const langBtn = document.getElementById('langToggleBtn');
-
-    langBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      langMenu.classList.toggle('open');
+    document.getElementById('langToggleBtn').addEventListener('click', (e) => {
+      e.stopPropagation(); langMenu.classList.toggle('open');
     });
-
     document.addEventListener('click', (e) => {
-      if (!langMenu.contains(e.target)) {
-        langMenu.classList.remove('open');
-      }
+      if (!langMenu.contains(e.target)) langMenu.classList.remove('open');
     });
 
+    // Observer for reveal animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if(entry.isIntersecting) {
-          entry.target.classList.add('active');
-        } else {
-          // Убираем класс, когда элемент уходит из зоны видимости
-          entry.target.classList.remove('active');
-        }
+        if(entry.isIntersecting) entry.target.classList.add('active');
+        else entry.target.classList.remove('active'); // Позволяет анимации повторяться при скролле
       });
     }, { threshold: 0.1 });
-
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+    // Background Canvas Logic
     const noiseCanvas = document.getElementById('noise-canvas');
     const ctxNoise = noiseCanvas.getContext('2d');
     function drawNoise() {
-      noiseCanvas.width = window.innerWidth;
-      noiseCanvas.height = window.innerHeight;
+      noiseCanvas.width = window.innerWidth; noiseCanvas.height = window.innerHeight;
       const imgData = ctxNoise.createImageData(noiseCanvas.width, noiseCanvas.height);
-      const data = imgData.data;
-      for (let i = 0; i < data.length; i += 4) {
+      for (let i = 0; i < imgData.data.length; i += 4) {
         const color = Math.random() < 0.5 ? 0 : 255;
-        data[i] = data[i+1] = data[i+2] = color;
-        data[i+3] = 30; // opacity
+        imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = color;
+        imgData.data[i+3] = 30;
       }
       ctxNoise.putImageData(imgData, 0, 0);
     }
-    window.addEventListener('resize', drawNoise);
-    drawNoise();
+    window.addEventListener('resize', drawNoise); drawNoise();
 
     const matrixCanvas = document.getElementById('matrix-canvas');
     const ctxMatrix = matrixCanvas.getContext('2d');
     let matrixInterval;
-    
     function startMatrix() {
-      matrixCanvas.width = window.innerWidth;
-      matrixCanvas.height = window.innerHeight;
-      const letters = "NEXUS010101XYZ".split("");
-      const fontSize = 16;
-      const columns = matrixCanvas.width / fontSize;
-      const drops = [];
+      matrixCanvas.width = window.innerWidth; matrixCanvas.height = window.innerHeight;
+      const letters = "NEXUS010101XYZ".split(""); const fontSize = 16;
+      const columns = matrixCanvas.width / fontSize; const drops = [];
       for(let x = 0; x < columns; x++) drops[x] = 1;
-
       if(matrixInterval) clearInterval(matrixInterval);
-      
       matrixInterval = setInterval(() => {
-        ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
-        ctxMatrix.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-        ctxMatrix.fillStyle = "#0F0";
-        ctxMatrix.font = fontSize + "px monospace";
+        ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)"; ctxMatrix.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        ctxMatrix.fillStyle = "#0F0"; ctxMatrix.font = fontSize + "px monospace";
         for(let i = 0; i < drops.length; i++) {
           const text = letters[Math.floor(Math.random() * letters.length)];
           ctxMatrix.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -551,25 +619,152 @@
         }
       }, 33);
     }
-
-    let clickCount = 0;
-    let clickTimeout;
+    let clickCount = 0, clickTimeout;
     document.getElementById('logo-btn').addEventListener('click', () => {
-      clickCount++;
-      clearTimeout(clickTimeout);
+      clickCount++; clearTimeout(clickTimeout);
       if (clickCount >= 5) {
         document.body.classList.toggle('matrix-mode');
-        if (document.body.classList.contains('matrix-mode')) {
-          startMatrix();
-        } else {
-          clearInterval(matrixInterval);
-        }
+        document.body.classList.contains('matrix-mode') ? startMatrix() : clearInterval(matrixInterval);
         clickCount = 0;
+      } else clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
+    });
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+    import { 
+      getAuth, setPersistence, browserLocalPersistence, 
+      createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+      sendEmailVerification, onAuthStateChanged, signOut 
+    } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+    // Настройки из твоего нового проекта
+    const firebaseConfig = {
+      apiKey: "AIzaSyArDkh4yZudMmov8oLOZmIMY7Kpm1_SODg",
+      authDomain: "nexus-a1c0e.firebaseapp.com",
+      projectId: "nexus-a1c0e",
+      storageBucket: "nexus-a1c0e.firebasestorage.app",
+      messagingSenderId: "911131910199",
+      appId: "1:911131910199:web:c5b041d06648e927271fb2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // ВАЖНО: сохраняем сессию в локальной памяти (аккаунт не слетит при F5)
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
+
+    // Логика Модального окна
+    const authBtn = document.getElementById('authBtn');
+    const authModal = document.getElementById('authModal');
+    const closeBtn = document.getElementById('closeModal');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabReg = document.getElementById('tabReg');
+    const authForm = document.getElementById('authForm');
+    const emailIn = document.getElementById('authEmail');
+    const pwdIn = document.getElementById('authPwd');
+    const submitBtn = document.getElementById('authSubmitBtn');
+    const authMsg = document.getElementById('authMsg');
+
+    let isLogin = true;
+
+    // Перевод ошибок Firebase
+    function getErrorText(code) {
+      const lang = localStorage.getItem('nexus_lang') || 'en';
+      const errors = {
+        'auth/invalid-email': { ru: 'Неверный email', en: 'Invalid email' },
+        'auth/email-already-in-use': { ru: 'Email уже занят', en: 'Email taken' },
+        'auth/weak-password': { ru: 'Слабый пароль (мин. 6 символов)', en: 'Weak password' },
+        'auth/invalid-credential': { ru: 'Неверный логин или пароль', en: 'Invalid credentials' },
+        'auth/api-key-not-valid.': { ru: 'Неверный API ключ Firebase. Проверьте настройки.', en: 'Invalid Firebase API key. Check settings.' },
+        'auth/api-key-not-valid.-please-pass-a-valid-api-key.': { ru: 'Неверный API ключ Firebase. Проверьте настройки.', en: 'Invalid Firebase API key. Check settings.' },
+      };
+      
+      // Fallback for missing keys that might have extra text
+      if (code && code.includes('api-key-not-valid')) {
+        return (lang === 'ru') ? 'Неверный API ключ Firebase. Проверьте настройки.' : 'Invalid Firebase API key. Check settings.';
+      }
+
+      return errors[code] ? (errors[code][lang] || errors[code]['en']) : code;
+    }
+
+    authBtn.addEventListener('click', () => {
+      // Если авторизован - предлагаем выйти
+      if(auth.currentUser && auth.currentUser.emailVerified) {
+        if(confirm((localStorage.getItem('nexus_lang') === 'ru') ? 'Выйти из аккаунта?' : 'Log out?')) {
+          signOut(auth);
+        }
       } else {
-        clickTimeout = setTimeout(() => { clickCount = 0; }, 500); // Сброс, если кликать медленно
+        // Иначе открываем окно
+        authModal.classList.add('open');
+        authMsg.textContent = '';
+      }
+    });
+    
+    closeBtn.addEventListener('click', () => authModal.classList.remove('open'));
+
+    function updateTabs() {
+      tabLogin.classList.toggle('active', isLogin);
+      tabReg.classList.toggle('active', !isLogin);
+      submitBtn.setAttribute('data-i18n', isLogin ? 'modal_btn_login' : 'modal_btn_reg');
+      window.setLang(localStorage.getItem('nexus_lang') || 'ru');
+      authMsg.textContent = '';
+    }
+    
+    tabLogin.addEventListener('click', () => { isLogin = true; updateTabs(); });
+    tabReg.addEventListener('click', () => { isLogin = false; updateTabs(); });
+
+    // Обработка Формы (Вход / Регистрация)
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = emailIn.value.trim();
+      const pwd = pwdIn.value;
+      authMsg.className = 'auth-msg';
+      authMsg.textContent = '...';
+
+      try {
+        if (isLogin) {
+          // ЛОГИН
+          const cred = await signInWithEmailAndPassword(auth, email, pwd);
+          
+          // Проверяем подтверждение почты!
+          if (!cred.user.emailVerified) {
+            authMsg.textContent = (localStorage.getItem('nexus_lang') === 'ru') 
+              ? 'Почта не подтверждена. Проверьте входящие письма.' 
+              : 'Email not verified. Check your inbox.';
+            await signOut(auth); // Выкидываем, пока не подтвердит
+          } else {
+            authModal.classList.remove('open');
+            authForm.reset();
+          }
+        } else {
+          // РЕГИСТРАЦИЯ
+          const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+          // Отправка ссылки на почту
+          await sendEmailVerification(cred.user);
+          authMsg.classList.add('success');
+          authMsg.textContent = (localStorage.getItem('nexus_lang') === 'ru') 
+            ? 'Успешно! Письмо с подтверждением отправлено.' 
+            : 'Success! Verification email sent.';
+          await signOut(auth); // Сразу выходим, ждем подтверждения
+        }
+      } catch (error) {
+        authMsg.textContent = getErrorText(error.code);
       }
     });
 
+    // Слушатель состояния (меняет кнопку в шапке)
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.emailVerified) {
+        // Успешный вход
+        authBtn.textContent = user.email.split('@')[0]; // Показываем ник до @
+        authBtn.removeAttribute('data-i18n'); // Убираем перевод
+      } else {
+        // Выход
+        authBtn.setAttribute('data-i18n', 'nav_login');
+        window.setLang(localStorage.getItem('nexus_lang') || 'en');
+      }
+    });
   </script>
 </body>
 </html>

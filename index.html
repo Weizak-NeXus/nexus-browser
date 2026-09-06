@@ -47,20 +47,21 @@
     #noise-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.15; }
     #matrix-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; opacity: 0; z-index: -1; transition: opacity 2s; pointer-events: none; }
     
+    /* ИДЕАЛЬНАЯ БЕСКОНЕЧНАЯ СЕТКА (GPU-ускорение, не пропадает) */
     .brutal-grid {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      position: fixed; top: -50px; left: -50px; 
+      width: calc(100vw + 100px); height: calc(100vh + 100px);
       background-image: 
         linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
       background-size: 40px 40px;
       z-index: -3; pointer-events: none;
-      animation: panGrid 60s linear infinite;
+      animation: panGrid 3s linear infinite;
     }
     
-    /* ИСПРАВЛЕННАЯ СЕТКА */
     @keyframes panGrid {
-      0% { background-position: 0px 0px; }
-      100% { background-position: 400px 400px; }
+      0% { transform: translate(0px, 0px); }
+      100% { transform: translate(40px, 40px); }
     }
 
     .bg-gradient {
@@ -262,14 +263,7 @@
     }
     
     .profile-details { display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
-    
-    /* ИМЯ С КНОПКОЙ ИЗМЕНЕНИЯ */
-    .profile-name-container { display: flex; align-items: center; gap: 10px; }
-    .profile-name { font-size: 1.5rem; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .edit-name-btn { background: none; border: none; color: var(--user-color); font-size: 1.2rem; cursor: pointer; transition: 0.2s; outline: none; }
-    .edit-name-btn:hover { transform: scale(1.2) rotate(15deg); text-shadow: 0 0 8px var(--user-color); }
-
-    .profile-email { font-size: 0.9rem; font-weight: 800; font-family: var(--font-mono); color: var(--accent-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+    .profile-email { font-size: 1.1rem; font-weight: 800; font-family: var(--font-mono); color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
     .profile-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; font-family: var(--font-mono); padding: 4px 8px; background: rgba(0,0,0,0.5); color: var(--user-color); border: 1px solid var(--user-color); font-weight: 700; width: max-content; }
     .profile-status.unverified { color: var(--neon-red); border-color: var(--neon-red); }
 
@@ -302,15 +296,26 @@
 
     /* DedSec Easter Egg Ascii Container */
     #dedsec-container {
-      position: fixed;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-family: var(--font-mono); color: var(--neon-cyan);
-      font-size: clamp(8px, 1.5vw, 16px); line-height: 1; white-space: pre;
-      z-index: 9999; pointer-events: none; opacity: 0; visibility: hidden;
-      text-shadow: 0 0 5px var(--neon-cyan); transition: opacity 0.5s;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-mono);
+      color: var(--neon-cyan);
+      font-size: 6px;
+      line-height: 1;
+      white-space: pre;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      text-shadow: 0 0 5px var(--neon-cyan);
+      transition: opacity 0.5s;
     }
     body.dedsec-mode #dedsec-container {
-      opacity: 0.8; visibility: visible; animation: glitch-anim 2s linear infinite;
+      opacity: 0.8;
+      visibility: visible;
+      animation: glitch-anim 2s linear infinite;
     }
     body.dedsec-mode .brutal-grid, body.dedsec-mode .bg-gradient, body.dedsec-mode main, body.dedsec-mode header, body.dedsec-mode footer {
        opacity: 0.1;
@@ -518,10 +523,12 @@
         </div>
       </div>
       <a href="#donate" class="btn-support" data-i18n="nav_support">Поддержать</a>
+      <!-- Кнопка аккаунта в шапке -->
       <button class="btn-account" id="authBtn" data-i18n="nav_login">Войти</button>
     </div>
   </header>
 
+  <!-- ОКНО АВТОРИЗАЦИИ -->
   <div class="modal-overlay" id="authModal">
     <div class="modal-content">
       <div class="scanlines"></div>
@@ -560,6 +567,7 @@
     </div>
   </div>
 
+  <!-- ОКНО ТЕРМИНАЛА ПРОФИЛЯ -->
   <div class="modal-overlay" id="profileModal">
     <div class="modal-content">
       <div class="scanlines"></div>
@@ -606,6 +614,7 @@
             </div>
         </div>
         
+        <!-- Улучшенная панель выбора цвета -->
         <div class="color-picker">
           <div class="color-btn" style="background: var(--accent); --c: var(--accent);" data-color="var(--accent)"></div>
           <div class="color-btn" style="background: var(--neon-cyan); --c: var(--neon-cyan);" data-color="var(--neon-cyan)"></div>
@@ -628,6 +637,7 @@
       <p class="reveal" data-i18n="hero_subtitle" style="transition-delay: 0.2s;">Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.</p>
       
       <div class="reveal" style="transition-delay: 0.3s;">
+        <!-- Перехват кнопки скачивания для авторизации -->
         <button id="downloadBtn" class="btn-main disabled-dl">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span data-i18n="hero_btn">Скачать для Windows</span>
@@ -721,17 +731,17 @@
   </footer>
 
   <script>
-    // ЯЗЫКИ (Исправлен баг выделения)
+    // --- Локализация (Исправлен баг фоллбэка) ---
     const dict = {
       en: {
         nav_support: "Support", nav_login: "Login",
-        modal_login_tab: "Sign In", modal_reg_tab: "Sign Up", modal_email_ph: "Email", modal_pwd_ph: "Password", modal_btn_login: "Sign In", modal_btn_reg: "Create Account", profile_logout: "DISCONNECT", term_title: "NEURAL LINK", term_uid: "UID: LOADING...",
+        modal_login_tab: "Sign In", modal_reg_tab: "Sign Up", modal_email_ph: "Email", modal_pwd_ph: "Password", modal_btn_login: "Sign In", modal_btn_reg: "Create Account", profile_logout: "DISCONNECT", status_verified: "ACCESS GRANTED", status_unverified: "Unverified Email", term_title: "NEURAL LINK", term_uid: "UID: LOADING...",
         hero_badge: "Build V14.19", hero_title: "Absolute Silence.", hero_subtitle: "Browser engineered to eliminate digital noise. Native AdBlock, SponsorBlock bypass, and zero telemetry.", hero_btn: "Download", features_title: "Architecture of Freedom", features_desc: "We rewrote the rules by embedding critical tools directly into the network stack.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Ads are blocked before loading into RAM.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "All tracking code is stripped.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Hardware-level auto-skipping of sponsors.", feat_ram_title: "RAM Optimization", feat_ram_desc: "Intelligent tab sleeping reduces memory consumption.", feat_ui_title: "Minimal UI", feat_ui_desc: "An interface that doesn't distract.", donate_title: "Support the Project", donate_desc: "Nexus is built by an independent team.", footer_rights: "All rights reserved.", footer_privacy: "Privacy Policy",
         mq_telemetry: "// ZERO TELEMETRY", mq_adblock: "NATIVE ADBLOCK", mq_sponsor: "SPONSORBLOCK EMBEDDED", mq_fast: "ULTRA FAST RENDER", dl_error: "AUTH REQUIRED TO DOWNLOAD", meta_enc: "ENCRYPTION", meta_ping: "SERVER PING", meta_fw: "FIREWALL", meta_active: "ACTIVE", meta_tel: "TELEMETRY", meta_blocked: "BLOCKED"
       },
       ru: {
         nav_support: "Поддержать", nav_login: "Войти",
-        modal_login_tab: "Вход", modal_reg_tab: "Регистрация", modal_email_ph: "Email", modal_pwd_ph: "Пароль", modal_btn_login: "Войти", modal_btn_reg: "Создать аккаунт", profile_logout: "РАЗОРВАТЬ СОЕДИНЕНИЕ", term_title: "NEURAL LINK", term_uid: "UID: ОЖИДАНИЕ...",
+        modal_login_tab: "Вход", modal_reg_tab: "Регистрация", modal_email_ph: "Email", modal_pwd_ph: "Пароль", modal_btn_login: "Войти", modal_btn_reg: "Создать аккаунт", profile_logout: "РАЗОРВАТЬ СОЕДИНЕНИЕ", status_verified: "ДОСТУП РАЗРЕШЕН", status_unverified: "Почта не подтверждена", term_title: "NEURAL LINK", term_uid: "UID: ОЖИДАНИЕ...",
         hero_badge: "Сборка V14.19", hero_title: "Абсолютная чистота.", hero_subtitle: "Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.", hero_btn: "Скачать для Windows", features_title: "Архитектура свободы", features_desc: "Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Реклама блокируется до загрузки в оперативную память.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "Весь следящий код и зонды корпораций вырезаны из кода.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Аппаратное распознавание и автоматический пропуск спонсоров.", feat_ram_title: "Оптимизация RAM", feat_ram_desc: "Снижает потребление памяти на 40%.", feat_ui_title: "Минимализм UI", feat_ui_desc: "Интерфейс, который не отвлекает. Только контент.", donate_title: "Поддержите проект", donate_desc: "Помогите оплачивать серверы.", footer_rights: "Все права защищены.", footer_privacy: "Политика приватности",
         mq_telemetry: "// НОЛЬ ТЕЛЕМЕТРИИ", mq_adblock: "ВСТРОЕННЫЙ ADBLOCK", mq_sponsor: "SPONSORBLOCK В ЯДРЕ", mq_fast: "СВЕРХБЫСТРЫЙ РЕНДЕР", dl_error: "ДЛЯ ЗАГРУЗКИ ТРЕБУЕТСЯ АВТОРИЗАЦИЯ", meta_enc: "ШИФРОВАНИЕ", meta_ping: "ПИНГ СЕРВЕРА", meta_fw: "СЕТЕВОЙ ЭКРАН", meta_active: "АКТИВЕН", meta_tel: "ТЕЛЕМЕТРИЯ", meta_blocked: "БЛОКИРОВАНА"
       },
@@ -746,37 +756,43 @@
     window.setLang = function(langCode) {
       if(!dict[langCode]) langCode = 'en';
       const t = dict[langCode];
+      const def = dict['en']; // Фоллбэк, если в других языках нет перевода
       localStorage.setItem('nexus_lang', langCode);
       
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if(t[key]) el.textContent = t[key];
+        el.textContent = t[key] || def[key] || key;
       });
       document.querySelectorAll('[data-i18n-ph]').forEach(el => {
         const key = el.getAttribute('data-i18n-ph');
-        if(t[key]) el.setAttribute('placeholder', t[key]);
+        el.setAttribute('placeholder', t[key] || def[key] || key);
       });
       
       document.getElementById('currentLangLabel').textContent = langCode.toUpperCase();
       document.getElementById('langMenu').classList.remove('open');
       
       document.querySelectorAll('.lang-dropdown button').forEach(b => {
-         b.classList.remove('active');
-         if(b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${langCode}'`)) {
-             b.classList.add('active');
-         }
+        b.classList.remove('active');
+        const onclickAttr = b.getAttribute('onclick') || '';
+        if(onclickAttr.includes(`'${langCode}'`)) {
+            b.classList.add('active');
+        }
       });
     };
 
     const savedLang = localStorage.getItem('nexus_lang') || 'ru';
-    window.setLang(dict[savedLang] ? savedLang : 'en');
+    window.setLang(savedLang);
 
     // UI Меню языка
     const langMenu = document.getElementById('langMenu');
-    document.getElementById('langToggleBtn').addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('open'); });
-    document.addEventListener('click', (e) => { if (!langMenu.contains(e.target)) langMenu.classList.remove('open'); });
+    document.getElementById('langToggleBtn').addEventListener('click', (e) => {
+      e.stopPropagation(); langMenu.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!langMenu.contains(e.target)) langMenu.classList.remove('open');
+    });
 
-    // Observer
+    // Observer появления блоков
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if(entry.isIntersecting) entry.target.classList.add('active');
@@ -799,7 +815,7 @@
     }
     window.addEventListener('resize', drawNoise); drawNoise();
 
-    // Канвас матрицы (Исправлен баг стирания)
+    // Канвас матрицы и пасхалка (Исправлен баг стирания)
     const matrixCanvas = document.getElementById('matrix-canvas');
     const ctxMatrix = matrixCanvas.getContext('2d');
     let matrixInterval;
@@ -829,10 +845,10 @@
         document.body.classList.toggle('dedsec-mode');
         if(document.body.classList.contains('matrix-mode')) {
            startMatrix();
-           applyUserColor('#00ff00'); 
+           applyUserColor('#00ff00'); // hacker green
         } else {
            clearInterval(matrixInterval);
-           ctxMatrix.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+           ctxMatrix.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height); // Полностью стираем старую матрицу
            applyUserColor(localStorage.getItem('nexus_avatar_color') || 'var(--neon-cyan)');
         }
         clickCount = 0;
@@ -846,6 +862,7 @@
     
     function applyUserColor(color) {
       document.documentElement.style.setProperty('--user-color', color);
+      
       avatarLetter.style.background = 'transparent';
       avatarLetter.style.color = color === 'var(--accent)' ? 'var(--accent)' : color;
       
@@ -864,7 +881,7 @@
       });
     });
 
-    // Реакции маскота и пароль
+    // Реакции маскота и показ пароля
     const mascot = document.getElementById('mascot');
     const emailInput = document.getElementById('authEmail');
     const passInput = document.getElementById('authPwd');
@@ -873,8 +890,14 @@
 
     emailInput.addEventListener('focus', () => mascot.classList.add('mascot-look-down'));
     emailInput.addEventListener('blur', () => mascot.classList.remove('mascot-look-down'));
-    passInput.addEventListener('focus', () => { if(passInput.type === 'password') mascot.classList.add('mascot-hide-eyes'); else mascot.classList.add('mascot-peek'); });
-    passInput.addEventListener('blur', () => { mascot.classList.remove('mascot-hide-eyes', 'mascot-peek'); });
+
+    passInput.addEventListener('focus', () => {
+      if(passInput.type === 'password') mascot.classList.add('mascot-hide-eyes');
+      else mascot.classList.add('mascot-peek');
+    });
+    passInput.addEventListener('blur', () => {
+      mascot.classList.remove('mascot-hide-eyes', 'mascot-peek');
+    });
 
     togglePassBtn.addEventListener('click', () => {
       if(passInput.type === 'password') {
@@ -889,7 +912,7 @@
     });
   </script>
 
-  <!-- FIREBASE AUTH ЛОГИКА -->
+  <!-- FIREBASE AUTH ЛОГИКА (С фиксом смены имени) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
     import { getAuth, setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
@@ -897,7 +920,10 @@
     const firebaseConfig = {
       apiKey: "AIzaSyArDkh4yZudMmov8oLOZmIMY7Kpm1_SODg",
       authDomain: "nexus-a1c0e.firebaseapp.com",
-      projectId: "nexus-a1c0e"
+      projectId: "nexus-a1c0e",
+      storageBucket: "nexus-a1c0e.firebasestorage.app",
+      messagingSenderId: "911131910199",
+      appId: "1:911131910199:web:c5b041d06648e927271fb2"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -967,7 +993,7 @@
       }
     });
 
-    // СМЕНА ИМЕНИ
+    // СМЕНА ИМЕНИ ПОЛЬЗОВАТЕЛЯ
     document.getElementById('editNameBtn').addEventListener('click', async () => {
       const newName = prompt("Введите новый никнейм (макс 15 символов):");
       if(newName && newName.trim().length > 0 && auth.currentUser) {

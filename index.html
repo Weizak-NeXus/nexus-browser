@@ -232,7 +232,7 @@
       margin: 0 auto 10px auto; border: 4px solid var(--border); transition: all 0.3s;
     }
     
-    /* УЛУЧШЕННАЯ КАСТОМИЗАЦИЯ */
+    /* УЛУЧШЕННАЯ КАСТОМИЗАЦИЯ ЦВЕТА ПРОФИЛЯ */
     .color-picker { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
     .color-btn { 
       width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); 
@@ -295,7 +295,7 @@
       padding: 20px 40px; background: var(--accent); color: var(--bg);
       text-decoration: none; font-size: 1.2rem; font-weight: 800; text-transform: uppercase;
       border: 2px solid var(--accent); box-shadow: 8px 8px 0px rgba(255,255,255,0.15);
-      transition: all 0.1s; position: relative; overflow: hidden;
+      transition: all 0.1s; position: relative; overflow: hidden; cursor: pointer;
     }
     .btn-main:hover { transform: translate(-2px, -2px); box-shadow: 10px 10px 0px rgba(255,255,255,0.15); }
     .btn-main:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0px rgba(255,255,255,0.15); }
@@ -431,7 +431,6 @@
         </div>
       </div>
       <a href="#donate" class="btn-support" data-i18n="nav_support">Поддержать</a>
-      <!-- Кнопка аккаунта в шапке -->
       <button class="btn-account" id="authBtn" data-i18n="nav_login">Войти</button>
     </div>
   </header>
@@ -515,10 +514,11 @@
       <p class="reveal" data-i18n="hero_subtitle" style="transition-delay: 0.2s;">Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.</p>
       
       <div class="reveal" style="transition-delay: 0.3s;">
-        <a href="https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/NexusBrowser-Setup.exe" class="btn-main">
+        <!-- ИЗМЕНЕНИЕ: Кнопка стала button для перехвата клика -->
+        <button id="downloadBtn" class="btn-main">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span data-i18n="hero_btn">Скачать для Windows</span>
-        </a>
+        </button>
       </div>
     </section>
 
@@ -613,13 +613,13 @@
         nav_support: "Support", nav_login: "Login",
         modal_login_tab: "Sign In", modal_reg_tab: "Sign Up", modal_email_ph: "Email", modal_pwd_ph: "Password", modal_btn_login: "Sign In", modal_btn_reg: "Create Account", profile_title: "Profile", profile_logout: "DISCONNECT", status_verified: "ACCESS GRANTED", status_unverified: "Unverified Email", term_title: "NEXUS // TERMINAL", term_uid: "UID: LOADING...",
         hero_badge: "Build V14.19", hero_title: "Absolute Silence.", hero_subtitle: "Browser engineered to eliminate digital noise. Native AdBlock, SponsorBlock bypass, and zero telemetry.", hero_btn: "Download", features_title: "Architecture of Freedom", features_desc: "We rewrote the rules by embedding critical tools directly into the network stack.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Ads are blocked before loading into RAM.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "All tracking code is stripped.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Hardware-level auto-skipping of sponsors.", feat_ram_title: "RAM Optimization", feat_ram_desc: "Intelligent tab sleeping reduces memory consumption.", feat_ui_title: "Minimal UI", feat_ui_desc: "An interface that doesn't distract.", donate_title: "Support the Project", donate_desc: "Nexus is built by an independent team.", footer_rights: "All rights reserved.", footer_privacy: "Privacy Policy",
-        mq_telemetry: "// ZERO TELEMETRY", mq_adblock: "NATIVE ADBLOCK", mq_sponsor: "SPONSORBLOCK EMBEDDED", mq_fast: "ULTRA FAST RENDER"
+        mq_telemetry: "// ZERO TELEMETRY", mq_adblock: "NATIVE ADBLOCK", mq_sponsor: "SPONSORBLOCK EMBEDDED", mq_fast: "ULTRA FAST RENDER", dl_error: "AUTH REQUIRED TO DOWNLOAD"
       },
       ru: {
         nav_support: "Поддержать", nav_login: "Войти",
         modal_login_tab: "Вход", modal_reg_tab: "Регистрация", modal_email_ph: "Email", modal_pwd_ph: "Пароль", modal_btn_login: "Войти", modal_btn_reg: "Создать аккаунт", profile_title: "Профиль", profile_logout: "РАЗОРВАТЬ СОЕДИНЕНИЕ", status_verified: "ДОСТУП РАЗРЕШЕН", status_unverified: "Почта не подтверждена", term_title: "NEXUS // TERMINAL", term_uid: "UID: ОЖИДАНИЕ...",
         hero_badge: "Сборка V14.19", hero_title: "Абсолютная чистота.", hero_subtitle: "Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.", hero_btn: "Скачать для Windows", features_title: "Архитектура свободы", features_desc: "Мы переписали правила, встроив важнейшие инструменты прямо в сетевой стек.", feat_adblock_title: "Native AdBlock", feat_adblock_desc: "Реклама блокируется до загрузки в оперативную память.", feat_telemetry_title: "Zero Telemetry", feat_telemetry_desc: "Весь следящий код и зонды корпораций вырезаны из кода.", feat_sponsor_title: "SponsorBlock", feat_sponsor_desc: "Аппаратное распознавание и автоматический пропуск спонсоров.", feat_ram_title: "Оптимизация RAM", feat_ram_desc: "Снижает потребление памяти на 40%.", feat_ui_title: "Минимализм UI", feat_ui_desc: "Интерфейс, который не отвлекает. Только контент.", donate_title: "Поддержите проект", donate_desc: "Помогите оплачивать серверы.", footer_rights: "Все права защищены.", footer_privacy: "Политика приватности",
-        mq_telemetry: "// НОЛЬ ТЕЛЕМЕТРИИ", mq_adblock: "ВСТРОЕННЫЙ ADBLOCK", mq_sponsor: "SPONSORBLOCK В ЯДРЕ", mq_fast: "СВЕРХБЫСТРЫЙ РЕНДЕР"
+        mq_telemetry: "// НОЛЬ ТЕЛЕМЕТРИИ", mq_adblock: "ВСТРОЕННЫЙ ADBLOCK", mq_sponsor: "SPONSORBLOCK В ЯДРЕ", mq_fast: "СВЕРХБЫСТРЫЙ РЕНДЕР", dl_error: "ДЛЯ ЗАГРУЗКИ ТРЕБУЕТСЯ АВТОРИЗАЦИЯ"
       },
       es: { nav_support: "Apoyo", nav_login: "Entrar", hero_btn: "Descargar", mq_telemetry: "// CERO TELEMETRÍA", mq_adblock: "ADBLOCK NATIVO" },
       de: { nav_support: "Spenden", nav_login: "Login", hero_btn: "Download", mq_telemetry: "// NULL TELEMETRIE", mq_adblock: "ADBLOCK" },
@@ -799,6 +799,7 @@
     const authBtn = document.getElementById('authBtn'); 
     const authModal = document.getElementById('authModal');
     const profileModal = document.getElementById('profileModal');
+    const downloadBtn = document.getElementById('downloadBtn'); // Кнопка загрузки
     
     document.getElementById('closeAuthModal').addEventListener('click', () => authModal.classList.remove('open'));
     document.getElementById('closeProfileModal').addEventListener('click', () => profileModal.classList.remove('open'));
@@ -837,6 +838,7 @@
     tabLogin.addEventListener('click', () => { isLogin = true; updateTabs(); });
     tabReg.addEventListener('click', () => { isLogin = false; updateTabs(); });
 
+    // Открытие окна в шапке (Авторизация ИЛИ Профиль)
     authBtn.addEventListener('click', () => {
       if(auth.currentUser && auth.currentUser.emailVerified) {
         document.getElementById('profileAvatarLetter').textContent = auth.currentUser.email.charAt(0).toUpperCase();
@@ -852,6 +854,21 @@
       } else {
         authModal.classList.add('open');
         authMsg.textContent = '';
+      }
+    });
+
+    // БЛОКИРОВКА СКАЧИВАНИЯ БЕЗ АВТОРИЗАЦИИ
+    downloadBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if(auth.currentUser && auth.currentUser.emailVerified) {
+        // Если вошел, скачиваем
+        window.location.href = "https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/NexusBrowser-Setup.exe";
+      } else {
+        // Если не вошел, открываем модалку и пишем ошибку
+        const lang = localStorage.getItem('nexus_lang') || 'ru';
+        authModal.classList.add('open');
+        authMsg.className = 'auth-msg';
+        authMsg.textContent = dict[lang] && dict[lang].dl_error ? dict[lang].dl_error : "ДЛЯ ЗАГРУЗКИ ТРЕБУЕТСЯ АВТОРИЗАЦИЯ";
       }
     });
 

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nexus Browser — Революция в веб-серфинге</title>
 
-<!-- Favicon из твоего старого сайта -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' fill='%23fafafa'/%3E%3Ctext x='32' y='44' font-family='sans-serif' font-weight='900' font-size='38' fill='%2309090b' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +24,6 @@
     --font-mono: 'JetBrains Mono', monospace;
     --expo: cubic-bezier(.16, 1, .3, 1);
     --soft: cubic-bezier(.4, 0, .2, 1);
-    --user-color: #06b6d4;
     --error: #ef4444;
     --success: #22c55e;
   }
@@ -114,14 +112,12 @@
   .btn.solid:hover { color: #fff; }
 
   .btn.logged-in {
-    border-color: var(--user-color);
-    color: var(--user-color);
-    text-shadow: 0 0 8px var(--user-color);
+    border-color: var(--line-strong);
+    color: var(--text);
   }
   .btn.logged-in:hover {
-    background: var(--user-color);
+    background: #fff;
     color: #000;
-    text-shadow: none;
   }
 
   .lang-wrap { position: relative; }
@@ -229,8 +225,6 @@
     border-color: var(--error);
     color: var(--error);
   }
-
-  .cta-note { font-size: .72rem; letter-spacing: .2em; color: var(--muted); }
 
   .marquee {
     position: relative; z-index: 1; overflow: hidden;
@@ -391,111 +385,277 @@
   }
   .auth-msg.success { color: var(--success); }
 
-  /* Профиль */
-  .profile-header {
-    display: flex; align-items: center; gap: 20px;
-    padding: 20px; background: rgba(0,0,0,.4);
-    border: 1px solid var(--line); border-left: 3px solid var(--user-color);
-    margin-bottom: 24px;
+  /* ПРОФИЛЬ - ПОЛНЫЙ РЕДИЗАЙН */
+  .profile-modal {
+    width: min(580px, 92vw);
+    background: var(--bg);
+    border: 2px solid var(--line-strong);
+    padding: 0;
+    position: relative;
   }
-  .avatar-wrap {
-    position: relative; width: 80px; height: 80px;
-    display: flex; align-items: center; justify-content: center;
+
+  .profile-header-bar {
+    background: #000;
+    border-bottom: 2px solid var(--line-strong);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    letter-spacing: .2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .profile-header-bar::before {
+    content: '>';
+    color: #fff;
+    margin-right: 8px;
+  }
+
+  .profile-status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse 2s var(--soft) infinite;
+  }
+
+  .status-dot.unverified {
+    background: var(--error);
+  }
+
+  .profile-content {
+    padding: 40px;
+  }
+
+  .avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .avatar-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
     flex-shrink: 0;
   }
-  .avatar-ring {
-    position: absolute; border-radius: 50%;
-    border: 1px dashed var(--user-color);
-    opacity: .5;
-  }
-  .avatar-ring.r1 { width: 100%; height: 100%; animation: spin 10s linear infinite; }
-  .avatar-ring.r2 { width: 115%; height: 115%; border-style: dotted; opacity: .3; animation: spin 15s linear infinite reverse; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  
-  .avatar {
-    width: 60px; height: 60px; background: #000;
-    color: var(--user-color); font-size: 2.2rem; font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--user-color); border-radius: 50%;
-    text-shadow: 0 0 8px var(--user-color);
-    transition: color .3s;
-  }
-  
-  .profile-info { flex: 1; overflow: hidden; }
-  .profile-name-row {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
-  }
-  .profile-name {
-    font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700;
-    color: #fff; text-transform: uppercase;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .edit-btn {
-    background: none; border: none; color: var(--muted);
-    cursor: pointer; font-size: 1.1rem; padding: 4px;
-    transition: color .3s, transform .3s;
-  }
-  .edit-btn:hover { color: #fff; transform: scale(1.2); }
-  
-  .profile-email {
-    font-family: var(--font-mono); font-size: .85rem;
-    color: var(--muted); margin-bottom: 8px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .profile-status {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: .75rem; font-family: var(--font-mono);
-    padding: 5px 10px; background: rgba(0,0,0,.5);
-    border: 1px solid var(--user-color); color: var(--user-color);
-    font-weight: 700; width: max-content;
-  }
-  .profile-status.unverified { color: var(--error); border-color: var(--error); }
 
-  .meta-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    margin-bottom: 24px;
+  .avatar-frame {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .meta-box {
-    background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.05);
-    padding: 12px;
-  }
-  .meta-box .label {
-    font-size: .65rem; color: var(--muted); text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .meta-box .value {
-    font-size: .85rem; font-weight: 700; color: #fff;
-  }
-  .meta-box .ok { color: var(--success); text-shadow: 0 0 6px rgba(34,197,94,.5); }
-  .meta-box .warn { color: var(--error); text-shadow: 0 0 6px rgba(239,68,68,.5); }
 
-  .color-picker {
-    display: flex; justify-content: center; gap: 12px;
-    padding: 16px; background: rgba(0,0,0,.2);
-    border: 1px dashed rgba(255,255,255,.1);
-    margin-bottom: 24px;
+  .avatar-frame::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border: 1px dashed var(--line);
+    animation: rotate 20s linear infinite;
   }
-  .color-btn {
-    width: 32px; height: 32px; border-radius: 50%;
-    border: 2px solid var(--line); cursor: pointer;
-    transition: all .3s var(--expo);
+
+  @keyframes rotate {
+    to { transform: rotate(360deg); }
   }
-  .color-btn:hover { transform: scale(1.15); border-color: #fff; }
-  .color-btn.active {
-    transform: scale(1.25); border-color: #fff;
-    box-shadow: 0 0 20px var(--c);
+
+  .avatar-letter {
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    color: #000;
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-id {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    color: var(--muted);
+    letter-spacing: .18em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .user-name-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .user-name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+  }
+
+  .edit-name-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all .3s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .edit-name-btn:hover {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
+
+  .user-email {
+    font-family: var(--font-mono);
+    font-size: .85rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    letter-spacing: .2em;
+    padding: 8px 14px;
+    border: 1px solid var(--success);
+    color: var(--success);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .user-status-badge.unverified {
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .user-status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+    border-radius: 50%;
+    animation: pulse 2s var(--soft) infinite;
+  }
+
+  .system-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .sys-card {
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--line);
+    padding: 18px;
+    transition: border-color .3s;
+  }
+
+  .sys-card:hover {
+    border-color: var(--line-strong);
+  }
+
+  .sys-label {
+    font-size: .65rem;
+    color: var(--muted);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .sys-value {
+    font-size: .9rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+  }
+
+  .sys-ok { color: var(--success); }
+  .sys-warn { color: var(--error); }
+
+  .logout-section {
+    padding-top: 30px;
+    border-top: 1px solid var(--line);
   }
 
   .logout-btn {
-    width: 100%; padding: 16px; background: transparent;
-    border: 1px solid var(--error); color: var(--error);
-    font-family: var(--font-mono); font-weight: 700;
-    letter-spacing: .14em; cursor: pointer;
+    width: 100%;
+    padding: 18px;
+    background: transparent;
+    border: 2px solid var(--error);
+    color: var(--error);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: .85rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    cursor: pointer;
     transition: all .3s;
+    position: relative;
+    overflow: hidden;
   }
+
+  .logout-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--error);
+    transform: translateX(-100%);
+    transition: transform .4s var(--expo);
+    z-index: -1;
+  }
+
+  .logout-btn:hover::before {
+    transform: translateX(0);
+  }
+
   .logout-btn:hover {
-    background: var(--error); color: #000;
-    box-shadow: 0 0 20px rgba(239,68,68,.4);
+    color: #000;
+    box-shadow: 0 0 30px rgba(239,68,68,.3);
   }
 
   .toast {
@@ -522,8 +682,10 @@
     nav.scrolled { padding: 10px 20px; }
     .hero, .section { padding-left: 6vw; padding-right: 6vw; }
     .grid { grid-template-columns: 1fr; }
-    .profile-header { flex-direction: column; text-align: center; }
-    .meta-grid { grid-template-columns: 1fr; }
+    .avatar-section { flex-direction: column; text-align: center; }
+    .user-info { text-align: center; }
+    .system-grid { grid-template-columns: 1fr; }
+    .profile-content { padding: 24px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -576,7 +738,6 @@
         <span data-i18n="download">СКАЧАТЬ ДЛЯ WINDOWS</span>
         <span class="bar" id="dlBar"></span>
       </button>
-      <span class="cta-note" data-i18n="note">94 MB // БЕЗ РЕГИСТРАЦИИ</span>
     </div>
     <div id="dlMsg" style="margin-top: 18px; font-size: .8rem; color: var(--error); opacity: 0; transition: opacity .4s;"></div>
   </div>
@@ -670,57 +831,60 @@
   </div>
 </div>
 
-<!-- Модалка профиля -->
+<!-- Модалка профиля - ПОЛНЫЙ РЕДИЗАЙН -->
 <div class="overlay" id="profileOverlay">
-  <div class="modal" style="max-width: 540px;">
+  <div class="modal profile-modal">
     <button class="modal-x" id="profileX">✕</button>
     
-    <div class="profile-header">
-      <div class="avatar-wrap">
-        <div class="avatar-ring r1"></div>
-        <div class="avatar-ring r2"></div>
-        <div class="avatar" id="profileAvatar">N</div>
+    <div class="profile-header-bar">
+      <span>USER_SESSION // ACTIVE</span>
+      <div class="profile-status-indicator">
+        <div class="status-dot" id="profileStatusDot"></div>
+        <span id="profileStatusText">ONLINE</span>
       </div>
-      <div class="profile-info">
-        <div class="profile-name-row">
-          <span class="profile-name" id="profileName">АНОНИМ</span>
-          <button class="edit-btn" id="editNameBtn" title="Изменить имя">✎</button>
+    </div>
+
+    <div class="profile-content">
+      <div class="avatar-section">
+        <div class="avatar-container">
+          <div class="avatar-frame">
+            <div class="avatar-letter" id="profileAvatar">N</div>
+          </div>
         </div>
-        <div class="profile-email" id="profileEmail">user@email.com</div>
-        <div class="profile-status" id="profileStatus">ДОСТУП РАЗРЕШЕН</div>
+        <div class="user-info">
+          <div class="user-id" id="profileUid">UID: LOADING...</div>
+          <div class="user-name-row">
+            <div class="user-name" id="profileName">АНОНИМ</div>
+            <button class="edit-name-btn" id="editNameBtn" title="Изменить имя">✎</button>
+          </div>
+          <div class="user-email" id="profileEmail">user@email.com</div>
+          <div class="user-status-badge" id="profileStatus">ДОСТУП РАЗРЕШЕН</div>
+        </div>
+      </div>
+
+      <div class="system-grid">
+        <div class="sys-card">
+          <div class="sys-label" data-i18n="metaEnc">ШИФРОВАНИЕ</div>
+          <div class="sys-value sys-ok">AES-256 GCM</div>
+        </div>
+        <div class="sys-card">
+          <div class="sys-label" data-i18n="metaPing">ПИНГ</div>
+          <div class="sys-value sys-ok">14ms</div>
+        </div>
+        <div class="sys-card">
+          <div class="sys-label" data-i18n="metaFw">ФАЙРВОЛ</div>
+          <div class="sys-value sys-ok" data-i18n="metaActive">АКТИВЕН</div>
+        </div>
+        <div class="sys-card">
+          <div class="sys-label" data-i18n="metaTel">ТЕЛЕМЕТРИЯ</div>
+          <div class="sys-value sys-warn" data-i18n="metaBlocked">БЛОКИРОВАНА</div>
+        </div>
+      </div>
+
+      <div class="logout-section">
+        <button class="logout-btn" id="logoutBtn" data-i18n="logout">РАЗОРВАТЬ СОЕДИНЕНИЕ</button>
       </div>
     </div>
-
-    <div class="meta-grid">
-      <div class="meta-box">
-        <div class="label" data-i18n="metaEnc">ШИФРОВАНИЕ</div>
-        <div class="value ok">AES-256 GCM</div>
-      </div>
-      <div class="meta-box">
-        <div class="label" data-i18n="metaPing">ПИНГ</div>
-        <div class="value ok">14ms</div>
-      </div>
-      <div class="meta-box">
-        <div class="label" data-i18n="metaFw">ФАЙРВОЛ</div>
-        <div class="value ok" data-i18n="metaActive">АКТИВЕН</div>
-      </div>
-      <div class="meta-box">
-        <div class="label" data-i18n="metaTel">ТЕЛЕМЕТРИЯ</div>
-        <div class="value warn" data-i18n="metaBlocked">БЛОКИРОВАНА</div>
-      </div>
-    </div>
-
-    <div class="color-picker">
-      <div class="color-btn" style="background: #fff; --c: #fff;" data-color="#fff"></div>
-      <div class="color-btn" style="background: #06b6d4; --c: #06b6d4;" data-color="#06b6d4"></div>
-      <div class="color-btn" style="background: #ef4444; --c: #ef4444;" data-color="#ef4444"></div>
-      <div class="color-btn" style="background: #a855f7; --c: #a855f7;" data-color="#a855f7"></div>
-      <div class="color-btn" style="background: #22c55e; --c: #22c55e;" data-color="#22c55e"></div>
-      <div class="color-btn" style="background: #eab308; --c: #eab308;" data-color="#eab308"></div>
-      <div class="color-btn" style="background: #ec4899; --c: #ec4899;" data-color="#ec4899"></div>
-    </div>
-
-    <button class="logout-btn" id="logoutBtn" data-i18n="logout">РАЗОРВАТЬ СОЕДИНЕНИЕ</button>
   </div>
 </div>
 
@@ -746,7 +910,7 @@ setPersistence(auth, browserLocalPersistence);
 const I18N = {
   ru: { badge:'СБОРКА V14.19 — СТАБИЛЬНАЯ', t1:'АБСОЛЮТНАЯ', t2:'ЧИСТОТА.',
     desc:'Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.',
-    download:'СКАЧАТЬ ДЛЯ WINDOWS', note:'112 MB // БЕЗ РЕГИСТРАЦИИ',
+    download:'СКАЧАТЬ ДЛЯ WINDOWS',
     support:'ПОДДЕРЖАТЬ', login:'ВОЙТИ', modules:'СИСТЕМНЫЕ МОДУЛИ',
     c1:'Реклама блокируется до загрузки в оперативную память. Нулевая нагрузка на систему.',
     c2:'Следящий код и зонды корпораций вырезаны из ядра. Полная анонимность по умолчанию.',
@@ -767,7 +931,7 @@ const I18N = {
     statusVerified:'ДОСТУП РАЗРЕШЕН', statusUnverified:'ПОЧТА НЕ ПОДТВЕРЖДЕНА' },
   en: { badge:'BUILD V14.19 — STABLE', t1:'ABSOLUTE', t2:'PURITY.',
     desc:'A browser engineered to eliminate digital noise. Native AdBlock, sponsor bypass and zero telemetry at the core.',
-    download:'DOWNLOAD FOR WINDOWS', note:'94 MB // NO SIGN-UP',
+    download:'DOWNLOAD FOR WINDOWS',
     support:'SUPPORT', login:'SIGN IN', modules:'SYSTEM MODULES',
     c1:'Ads are blocked before they ever reach memory. Zero overhead on your system.',
     c2:'Tracking code and corporate probes are cut from the core. Anonymous by default.',
@@ -788,7 +952,7 @@ const I18N = {
     statusVerified:'ACCESS GRANTED', statusUnverified:'EMAIL NOT VERIFIED' },
   de: { badge:'BUILD V14.19 — STABIL', t1:'ABSOLUTE', t2:'REINHEIT.',
     desc:'Ein Browser, der digitales Rauschen eliminiert. Nativer AdBlock, Sponsor-Bypass und keine Telemetrie im Kern.',
-    download:'FÜR WINDOWS LADEN', note:'94 MB // OHNE REGISTRIERUNG',
+    download:'FÜR WINDOWS LADEN',
     support:'UNTERSTÜTZEN', login:'ANMELDEN', modules:'SYSTEMMODULE',
     c1:'Werbung wird blockiert, bevor sie den Speicher erreicht. Keine Mehrbelastung.',
     c2:'Tracking-Code und Konzerndaten-Sonden sind aus dem Kern entfernt. Anonym per Standard.',
@@ -947,14 +1111,22 @@ function openProfile() {
   document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
   document.getElementById('profileName').textContent = name.toUpperCase();
   document.getElementById('profileEmail').textContent = user.email;
+  document.getElementById('profileUid').textContent = 'UID: ' + user.uid.substring(0, 12) + '...';
   
   const status = document.getElementById('profileStatus');
+  const statusDot = document.getElementById('profileStatusDot');
+  const statusText = document.getElementById('profileStatusText');
+  
   if (user.emailVerified) {
-    status.className = 'profile-status';
+    status.className = 'user-status-badge';
     status.textContent = I18N[lang].statusVerified;
+    statusDot.className = 'status-dot';
+    statusText.textContent = 'ONLINE';
   } else {
-    status.className = 'profile-status unverified';
+    status.className = 'user-status-badge unverified';
     status.textContent = I18N[lang].statusUnverified;
+    statusDot.className = 'status-dot unverified';
+    statusText.textContent = 'UNVERIFIED';
   }
   
   profileOverlay.classList.add('open');
@@ -978,23 +1150,6 @@ document.getElementById('editNameBtn').addEventListener('click', async () => {
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   await signOut(auth);
   profileOverlay.classList.remove('open');
-});
-
-const savedColor = localStorage.getItem('nexus_avatar_color') || '#06b6d4';
-function applyUserColor(color) {
-  document.documentElement.style.setProperty('--user-color', color);
-  document.querySelectorAll('.color-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.color === color);
-  });
-}
-applyUserColor(savedColor);
-
-document.querySelectorAll('.color-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const color = btn.dataset.color;
-    applyUserColor(color);
-    localStorage.setItem('nexus_avatar_color', color);
-  });
 });
 
 function updateAuthUI() {

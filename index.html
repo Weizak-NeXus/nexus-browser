@@ -192,12 +192,38 @@
   .cta-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; opacity: 0; transform: translateY(24px); transition: opacity 1s var(--soft) 1s, transform 1s var(--expo) 1s; }
   body.loaded .cta-row { opacity: 1; transform: none; }
 
-  .btn-big { display: inline-flex; align-items: center; gap: 14px; padding: 20px 38px; font-size: .85rem; border-width: 2px; }
+  .btn-big { display: inline-flex; align-items: center; gap: 14px; padding: 20px 38px; font-size: .85rem; border-width: 2px; position: relative; }
   .btn-big svg { transition: transform .5s var(--expo); }
   .btn-big:hover svg { transform: translateY(4px); }
   .btn-big .bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0%; background: currentColor; opacity: .5; transition: width 1.8s var(--soft); }
   .btn-big.disabled { border-color: var(--line); color: var(--muted); }
   .btn-big.disabled:hover { border-color: var(--error); color: var(--error); }
+
+  /* БЕТА-КНОПКА */
+  .btn-big.beta-btn {
+    border-color: var(--success);
+    color: var(--success);
+  }
+  .btn-big.beta-btn::after {
+    content: 'BETA';
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    background: var(--success);
+    color: #000;
+    font-size: .58rem;
+    font-weight: 800;
+    padding: 3px 7px;
+    letter-spacing: .12em;
+    font-family: var(--font-mono);
+  }
+  .btn-big.beta-btn:hover {
+    background: var(--success);
+    color: #000;
+    border-color: var(--success);
+    box-shadow: 0 0 30px rgba(34, 197, 94, .3);
+  }
+  .btn-big.beta-btn .bar { background: var(--success); }
 
   .marquee { position: relative; z-index: 1; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 16px 0; background: rgba(255,255,255,.02); }
   .marquee-track { display: flex; width: max-content; animation: marquee 36s linear infinite; }
@@ -490,6 +516,13 @@
         <span data-i18n="download">СКАЧАТЬ ДЛЯ WINDOWS</span>
         <span class="bar" id="dlBar"></span>
       </button>
+
+      <!-- БЕТА-КНОПКА (только для yaroslav.tazo@mail.ru) -->
+      <button class="btn btn-big beta-btn" id="betaBtn" style="display: none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <span>СКАЧАТЬ БЕТА</span>
+        <span class="bar" id="betaBar"></span>
+      </button>
     </div>
     <div id="dlMsg" style="margin-top: 18px; font-size: .8rem; color: var(--error); opacity: 0; transition: opacity .4s;"></div>
   </div>
@@ -554,51 +587,31 @@
     <button class="modal-x" id="authX">✕</button>
 
     <div class="auth-body">
-      <!-- КОТ: сидит на полке внутри окна, ничего не вылезает -->
       <div class="mascot" id="mascot">
         <svg viewBox="0 0 140 150" fill="none">
-          <!-- ПОЛКА, на которой сидит кот -->
           <line x1="14" y1="128" x2="126" y2="128" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
           <line x1="22" y1="128" x2="16" y2="140" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
           <line x1="118" y1="128" x2="124" y2="140" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
-
-          <!-- хвост свисает с полки -->
           <path class="tail" d="M96 124 q22 4 16 22" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
-
-          <!-- тело сидит на полке -->
           <rect x="48" y="74" width="44" height="54" rx="17" fill="#0c0c0c" stroke="#fff" stroke-width="3"/>
           <ellipse cx="70" cy="104" rx="13" ry="17" stroke="#fff" stroke-width="1.5" opacity=".3"/>
-
-          <!-- передние лапки лежат на полке -->
           <rect x="50" y="120" width="16" height="11" rx="5.5" fill="#0c0c0c" stroke="#fff" stroke-width="2.6"/>
           <rect x="74" y="120" width="16" height="11" rx="5.5" fill="#0c0c0c" stroke="#fff" stroke-width="2.6"/>
-
-          <!-- уши -->
           <path d="M52 36 L45 12 L64 26 Z" fill="#0c0c0c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
           <path d="M88 36 L95 12 L76 26 Z" fill="#0c0c0c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
           <path d="M52 30 L49 19 L58 25 Z" fill="#fff" opacity=".85"/>
           <path d="M88 30 L91 19 L82 25 Z" fill="#fff" opacity=".85"/>
-
-          <!-- голова -->
           <circle cx="70" cy="52" r="27" fill="#0c0c0c" stroke="#fff" stroke-width="3"/>
-
-          <!-- усы -->
           <g stroke="#fff" stroke-width="1.6" opacity=".55" stroke-linecap="round">
             <line x1="44" y1="54" x2="30" y2="51"/>
             <line x1="44" y1="60" x2="30" y2="62"/>
             <line x1="96" y1="54" x2="110" y2="51"/>
             <line x1="96" y1="60" x2="110" y2="62"/>
           </g>
-
-          <!-- глаза -->
           <g class="eye left"><circle class="eye-ball" cx="60" cy="50" r="4" fill="#fff"/></g>
           <g class="eye right"><circle class="eye-ball" cx="80" cy="50" r="4" fill="#fff"/></g>
-
-          <!-- нос и рот -->
           <path d="M70 58 l-3.2 -3.4 h6.4 Z" fill="#fff"/>
           <path d="M70 58 q-3 4.5 -6.5 2.5 M70 58 q3 4.5 6.5 2.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-
-          <!-- лапки для "закрыть глаза" (стартуют у тела, поднимаются к глазам) -->
           <g class="paw left">
             <rect x="40" y="112" width="19" height="15" rx="7.5" fill="#0c0c0c" stroke="#fff" stroke-width="3"/>
             <circle cx="46" cy="119.5" r="1.6" fill="#fff" opacity=".7"/>
@@ -704,6 +717,11 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 setPersistence(auth, browserLocalPersistence);
 
+/* EMAIL ДЛЯ БЕТА-ДОСТУПА */
+const BETA_EMAIL = 'yaroslav.tazo@mail.ru';
+const BETA_LINK = 'https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/Nexus-Browser-Setup-15.1.1.exe';
+const STABLE_LINK = 'https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/NexusBrowser-Setup.exe';
+
 const I18N = {
   ru: { badge:'СБОРКА V14.19 — СТАБИЛЬНАЯ', t1:'АБСОЛЮТНАЯ', t2:'ЧИСТОТА.',
     desc:'Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.',
@@ -802,6 +820,7 @@ const authOverlay = document.getElementById('authOverlay');
 const profileOverlay = document.getElementById('profileOverlay');
 const loginBtn = document.getElementById('loginBtn');
 const downloadBtn = document.getElementById('downloadBtn');
+const betaBtn = document.getElementById('betaBtn');
 const dlMsg = document.getElementById('dlMsg');
 
 loginBtn.addEventListener('click', () => {
@@ -946,6 +965,7 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
   profileOverlay.classList.remove('open');
 });
 
+/* ОБНОВЛЕНИЕ UI + БЕТА-ДОСТУП */
 function updateAuthUI() {
   const user = auth.currentUser;
   if (user && user.emailVerified) {
@@ -955,16 +975,25 @@ function updateAuthUI() {
     loginBtn.textContent = name.toUpperCase();
     loginBtn.removeAttribute('data-i18n');
     downloadBtn.classList.remove('disabled');
+
+    // Бета-кнопка только для yaroslav.tazo@mail.ru
+    if (user.email.toLowerCase() === BETA_EMAIL.toLowerCase()) {
+      betaBtn.style.display = 'inline-flex';
+    } else {
+      betaBtn.style.display = 'none';
+    }
   } else {
     loginBtn.classList.add('solid');
     loginBtn.classList.remove('logged-in');
     loginBtn.setAttribute('data-i18n', 'login');
     loginBtn.textContent = I18N[lang].login;
     downloadBtn.classList.add('disabled');
+    betaBtn.style.display = 'none';
   }
 }
 onAuthStateChanged(auth, updateAuthUI);
 
+/* СТАБИЛЬНАЯ ВЕРСИЯ */
 downloadBtn.addEventListener('click', e => {
   e.preventDefault();
   if (auth.currentUser && auth.currentUser.emailVerified) {
@@ -974,7 +1003,7 @@ downloadBtn.addEventListener('click', e => {
     requestAnimationFrame(() => bar.style.width = '100%');
     setTimeout(() => {
       label.textContent = I18N[lang].dlDone;
-      setTimeout(() => { window.location.href = 'https://github.com/Weizak-NeXus/nexus-browser/releases/download/v14.19/NexusBrowser-Setup.exe'; }, 800);
+      setTimeout(() => { window.location.href = STABLE_LINK; }, 800);
     }, 1800);
   } else {
     authOverlay.classList.add('open');
@@ -982,6 +1011,22 @@ downloadBtn.addEventListener('click', e => {
     dlMsg.style.opacity = '1';
     setTimeout(() => { dlMsg.style.opacity = '0'; }, 3000);
   }
+});
+
+/* БЕТА-ВЕРСИЯ (только yaroslav.tazo@mail.ru) */
+betaBtn.addEventListener('click', e => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user || !user.emailVerified || user.email.toLowerCase() !== BETA_EMAIL.toLowerCase()) return;
+
+  const label = betaBtn.querySelector('span:not(.bar)');
+  const bar = document.getElementById('betaBar');
+  label.textContent = 'ИНИЦИАЛИЗАЦИЯ БЕТА...';
+  requestAnimationFrame(() => bar.style.width = '100%');
+  setTimeout(() => {
+    label.textContent = 'БЕТА ЗАГРУЖАЕТСЯ...';
+    setTimeout(() => { window.location.href = BETA_LINK; }, 800);
+  }, 1800);
 });
 
 /* фон / анимации страницы */

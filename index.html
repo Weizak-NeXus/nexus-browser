@@ -2,7 +2,26 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script>
+/* Определяем телефон до отрисовки страницы, чтобы не мигали элементы загрузки. */
+(function () {
+  const ua = navigator.userAgent || '';
+  const mobileOS = /Android|iPhone|iPod|Windows Phone/i.test(ua) || (navigator.userAgentData && navigator.userAgentData.mobile);
+  const touchCompact = matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
+  const narrowPreview = matchMedia('(max-width: 480px)').matches;
+  const mobile = Boolean(mobileOS || touchCompact || narrowPreview);
+  window.nexusMobileMode = mobile;
+  if (!mobile) return;
+  document.documentElement.classList.add('is-mobile');
+  try {
+    if (!sessionStorage.getItem('nexus_mobile_notice_seen')) document.documentElement.classList.add('show-mobile-intro');
+  } catch (err) {
+    document.documentElement.classList.add('show-mobile-intro');
+  }
+})();
+</script>
+
 <title>Nexus Browser — Революция в веб-серфинге</title>
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' fill='%23fafafa'/%3E%3Ctext x='32' y='44' font-family='sans-serif' font-weight='900' font-size='38' fill='%2309090b' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
@@ -471,6 +490,136 @@
     .line-mask > span { transform: none; }
     [data-reveal], .hero-desc, .cta-row, .terminal, .anim, .mascot { opacity: 1; transform: none; filter: none; }
   }
+  /* ===== NeXus Mobile Experience ===== */
+  .mobile-download-status { display: none; }
+  .mobile-status-under-cta { display: none; }
+
+  .mobile-intro {
+    position: fixed; inset: 0; z-index: 450; display: none;
+    overflow-y: auto; overscroll-behavior: contain;
+    padding: max(18px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+    background: radial-gradient(ellipse at 50% 10%, #202125 0%, #090a0b 45%, #020203 100%);
+    color: #fff; opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .55s var(--soft), visibility .55s;
+    isolation: isolate; -webkit-overflow-scrolling: touch;
+  }
+  .mobile-intro::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    background-size: 42px 42px; mask-image: linear-gradient(#000,transparent 85%);
+  }
+  .mobile-intro::after { content: ''; position: fixed; left: -20%; right: -20%; top: 32%; height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent); transform: rotate(-21deg); opacity: .4; pointer-events: none; }
+  html.is-mobile .mobile-intro { display: flex; align-items: center; justify-content: center; }
+  html.show-mobile-intro .mobile-intro { opacity: 1; visibility: visible; pointer-events: auto; }
+  html.show-mobile-intro body { overflow: hidden; }
+  .intro-content { width: min(100%, 440px); margin: auto; position: relative; padding: 4px 0; }
+  .intro-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .intro-brand { display: flex; align-items: center; gap: 11px; font-family: var(--font-display); font-weight: 800; letter-spacing: .15em; font-size: .85rem; }
+  .intro-brand .logo-mark { width: 30px; height: 30px; font-size: 1rem; }
+  .intro-index { font-size: .58rem; letter-spacing: .15em; color: var(--muted); white-space: nowrap; }
+  .intro-stage { position: relative; height: clamp(155px, 28vh, 245px); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .intro-orbit { position: absolute; width: 250px; height: 250px; border: 1px solid rgba(255,255,255,.095); border-radius: 50%; animation: introSpin 24s linear infinite; }
+  .intro-orbit::before,.intro-orbit::after { content: ''; position: absolute; border-radius: 50%; }
+  .intro-orbit::before { inset: 23px; border: 1px dashed rgba(255,255,255,.13); }
+  .intro-orbit::after { width: 7px; height: 7px; background: #fff; box-shadow: 0 0 24px rgba(255,255,255,.75); left: 7px; top: 54px; }
+  .intro-phone { position: relative; width: 102px; height: 156px; border-radius: 21px; padding: 6px; background: #0b0b0e; border: 2px solid #909095; box-shadow: 0 0 0 6px rgba(255,255,255,.04),0 20px 80px rgba(0,0,0,.8); transform: rotate(-11deg); animation: phoneFloat 5s ease-in-out infinite; }
+  .intro-phone-screen { width: 100%; height: 100%; border-radius: 14px; background: linear-gradient(145deg,#1d1d23,#050505 75%); border: 1px solid rgba(255,255,255,.15); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; }
+  .intro-phone-screen::before { content: ''; width: 34px; height: 4px; background: #8c8c92; border-radius: 9px; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); }
+  .intro-phone-screen b { display: grid; place-items: center; width: 42px; height: 42px; font-family: var(--font-display); font-size: 1.65rem; font-weight: 800; border: 1px solid rgba(255,255,255,.4); color: rgba(255,255,255,.7); }
+  .intro-phone-screen i { width: 46px; height: 2px; background: #fff; transform: rotate(-35deg); position: absolute; margin-top: -5px; box-shadow: 0 0 12px #fff; }
+  .intro-phone-screen span { font-size: .51rem; letter-spacing: .12em; color: var(--muted); }
+  .intro-decor-tag { position: absolute; right: max(2%,calc(50% - 166px)); top: 24%; font-size: .57rem; letter-spacing: .12em; border: 1px solid var(--line); padding: 8px; color: var(--muted); background: #101013; transform: rotate(5deg); }
+  .intro-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: .61rem; letter-spacing: .18em; color: #c9c9cb; margin: 5px 0 16px; }
+  .intro-eyebrow i { width: 8px; height: 8px; background: #d7d7da; box-shadow: 0 0 15px rgba(255,255,255,.6); border-radius: 50%; animation: pulse 2s infinite; }
+  .intro-title { font-family: var(--font-display); font-size: clamp(1.85rem,8vw,3.1rem); text-transform: uppercase; line-height: 1.14; font-weight: 800; letter-spacing: -.045em; margin-bottom: 18px; overflow-wrap: anywhere; }
+  .intro-title em { font-style: normal; color: #7d7d86; }
+  .intro-description { max-width: 370px; color: #a7a7ae; line-height: 1.7; font-size: .77rem; margin-bottom: 24px; }
+  .intro-platforms { border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.025); margin-bottom: 20px; }
+  .intro-platform { display: flex; align-items: center; gap: 12px; padding: 13px 14px; font-size: .69rem; letter-spacing: .04em; }
+  .intro-platform + .intro-platform { border-top: 1px solid rgba(255,255,255,.1); }
+  .intro-platform svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .intro-platform-name { flex: 1; min-width: 0; font-weight: 700; }
+  .intro-platform-state { font-size: .56rem; letter-spacing: .09em; color: var(--muted); text-align: right; }
+  .intro-platform-state.available { color: #86efac; }
+  .intro-platform-state.upcoming { color: #f2ce91; }
+  .intro-actions { display: grid; grid-template-columns: 1fr; gap: 9px; }
+  .intro-actions .btn { width: 100%; min-height: 53px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: .72rem; letter-spacing: .1em; }
+  .intro-actions svg { width: 17px; height: 17px; }
+  .intro-footnote { color: #686870; font-size: .56rem; letter-spacing: .11em; text-align: center; margin-top: 14px; }
+  .intro-content > * { transition: transform .9s var(--expo),opacity .8s var(--soft); transform: translateY(22px); opacity: 0; }
+  html.show-mobile-intro .intro-content > * { transform: translateY(0); opacity: 1; }
+  html.show-mobile-intro .intro-content > :nth-child(2) { transition-delay: .09s; }
+  html.show-mobile-intro .intro-content > :nth-child(3) { transition-delay: .14s; }
+  html.show-mobile-intro .intro-content > :nth-child(4) { transition-delay: .2s; }
+  html.show-mobile-intro .intro-content > :nth-child(5) { transition-delay: .25s; }
+  html.show-mobile-intro .intro-content > :nth-child(6) { transition-delay: .3s; }
+  html.show-mobile-intro .intro-content > :nth-child(7) { transition-delay: .35s; }
+  @keyframes introSpin { to { transform: rotate(360deg); } }
+  @keyframes phoneFloat { 0%,100% { transform: translateY(0) rotate(-11deg); } 50% { transform: translateY(-10px) rotate(-8deg); } }
+
+  html.is-mobile #downloadBtn { display: flex; flex-direction: column; align-items: center; gap: 6px; background: #101012; color: #8b8b91 !important; border: 1px solid rgba(255,255,255,.16) !important; cursor: not-allowed; min-height: 80px; justify-content: center; width: 100%; }
+  html.is-mobile #downloadBtn::before,html.is-mobile #downloadBtn .bar,html.is-mobile #downloadBtn svg { display: none; }
+  html.is-mobile #downloadBtn [data-i18n="download"] { text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #8a8a92; font-size: .67rem; opacity: .55; }
+  html.is-mobile .mobile-download-status { display: inline; font-size: .71rem; font-weight: 800; letter-spacing: .1em; color: #f2ce91; }
+  html.is-mobile #betaBtn { display: none !important; }
+  html.is-mobile #downloadBtn:disabled { opacity: 1; }
+  html.is-mobile .mobile-status-under-cta { display: block; color: var(--muted); font-size: .66rem; line-height: 1.6; padding-top: 4px; }
+  @media (max-width: 640px) {
+    nav { padding: 12px 5vw; gap: 10px; }
+    nav.scrolled { padding: 10px 5vw; }
+    .logo { gap: 8px; font-size: .8rem; letter-spacing: .08em; }
+    .logo-mark { width: 32px; height: 32px; font-size: 1rem; }
+    .nav-right { gap: 5px; }
+    .nav-right .btn { padding: 11px 8px; font-size: .62rem; letter-spacing: .03em; white-space: nowrap; }
+    .nav-right #loginBtn { max-width: 108px; overflow: hidden; text-overflow: ellipsis; }
+    .lang-menu { z-index: 110; }
+    .hero { min-height: auto; padding-top: 134px; padding-bottom: 72px; }
+    .hero-inner { max-width: 100%; }
+    h1 { font-size: clamp(1.8rem,7.6vw,3.1rem); margin-bottom: 26px; overflow-wrap: anywhere; }
+    .badge { font-size: .58rem; letter-spacing: .14em; margin-bottom: 32px; }
+    .hero-desc { padding-left: 16px; font-size: .78rem; line-height: 1.8; margin-bottom: 20px; }
+    .terminal { font-size: .65rem; line-height: 1.85; min-height: 90px; margin-bottom: 26px; }
+    .cta-row { flex-direction: column; width: 100%; gap: 12px; align-items: stretch; }
+    .cta-row .btn-big { padding: 17px 19px; width: 100%; justify-content: center; font-size: .73rem; letter-spacing: .09em; }
+    .section { padding-top: 76px; padding-bottom: 76px; }
+    .section-head { gap: 12px; margin-bottom: 30px; }
+    .section-title { font-size: clamp(1.08rem,5vw,1.5rem); }
+    .card { padding: 32px 26px; }
+    .card h3 { font-size: .93rem; }
+    .stat { padding: 35px 28px; }
+    footer { padding: 36px 6vw; line-height: 1.7; }
+    .auth-modal,.profile-modal { max-height: 94dvh; overflow-y: auto; }
+    .overlay { padding: 10px; }
+    .auth-body { padding-left: 23px; padding-right: 23px; }
+    .toast { width: min(94vw,430px); white-space: pre-wrap; overflow-wrap: anywhere; bottom: max(16px,env(safe-area-inset-bottom)); padding: 15px 16px; }
+    .bg-scan,.glow { display: none; }
+  }
+  @media (max-width: 365px) {
+    nav { flex-direction: column; align-items: stretch; }
+    nav .nav-right { justify-content: space-between; }
+    nav .nav-right #loginBtn { max-width: 115px; }
+    .hero { padding-top: 171px; }
+    .intro-title { font-size: 1.78rem; }
+    .intro-description { font-size: .7rem; }
+    .intro-platform { font-size: .62rem; padding: 11px 9px; }
+    .intro-platform-state { font-size: .49rem; }
+  }
+  @media (max-height: 710px) and (max-width: 640px) {
+    .intro-stage { height: 124px; }
+    .intro-phone { transform: scale(.75) rotate(-11deg); animation: none; }
+    .intro-orbit { width: 190px; height: 190px; }
+    .intro-description { margin-bottom: 14px; }
+    .intro-platforms { margin-bottom: 13px; }
+    .intro-eyebrow { margin-bottom: 9px; }
+    .intro-title { margin-bottom: 10px; }
+    .intro-actions .btn { min-height: 45px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .intro-phone,.intro-orbit,.intro-eyebrow i { animation: none !important; }
+    .mobile-intro,.intro-content > * { transition-duration: .01ms !important; }
+    .intro-content > * { opacity: 1; transform: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -511,12 +660,12 @@
     <p class="hero-desc" data-i18n="desc">Браузер, спроектированный для устранения цифрового шума. Нативный AdBlock, обход спонсорских интеграций и нулевая телеметрия в ядре.</p>
     <div class="terminal" id="terminal"></div>
     <div class="cta-row">
-      <button class="btn btn-big disabled" id="downloadBtn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <button class="btn btn-big disabled" id="downloadBtn" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span data-i18n="download">СКАЧАТЬ ДЛЯ WINDOWS</span>
+        <span class="mobile-download-status" data-i18n="mobileDownload">ДЛЯ ТЕЛЕФОНОВ — В РАЗРАБОТКЕ</span>
         <span class="bar" id="dlBar"></span>
       </button>
-
       <!-- БЕТА-КНОПКА (только для yaroslav.tazo@mail.ru) -->
       <button class="btn btn-big beta-btn" id="betaBtn" style="display: none;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
@@ -524,6 +673,7 @@
         <span class="bar" id="betaBar"></span>
       </button>
     </div>
+    <p class="mobile-status-under-cta" data-i18n="mobileDownloadNote">Версия NeXus для Android разрабатывается. Пока браузер доступен только на Windows.</p>
     <div id="dlMsg" style="margin-top: 18px; font-size: .8rem; color: var(--error); opacity: 0; transition: opacity .4s;"></div>
   </div>
 </header>
@@ -700,6 +850,62 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Первое посещение с телефона: анимированное системное сообщение -->
+<div class="mobile-intro" id="mobileIntro" role="dialog" aria-modal="true" aria-labelledby="mobileIntroTitle" aria-hidden="true">
+  <div class="intro-content">
+    <div class="intro-top">
+      <div class="intro-brand"><span class="logo-mark">N</span><span>NEXUS</span></div>
+      <span class="intro-index">// PLATFORM UPDATE</span>
+    </div>
+    <div class="intro-stage" aria-hidden="true">
+      <div class="intro-orbit"></div>
+      <div class="intro-phone"><div class="intro-phone-screen"><b>N</b><i></i><span>COMING SOON</span></div></div>
+      <span class="intro-decor-tag">ANDROID // DEV</span>
+    </div>
+    <div class="intro-eyebrow"><i></i><span data-i18n="introEyebrow">СТАТУС МОБИЛЬНОЙ ВЕРСИИ</span></div>
+    <h2 class="intro-title" id="mobileIntroTitle"><span data-i18n="introTitle">ПОКА ТОЛЬКО</span><br><em data-i18n="introTitleLine">НА WINDOWS.</em></h2>
+    <p class="intro-description" data-i18n="introDesc">NeXus Browser сейчас доступен для компьютеров с Windows. Мы уже разрабатываем версию для Android — пока можно ознакомиться с сайтом и его возможностями.</p>
+    <div class="intro-platforms" aria-label="Platforms">
+      <div class="intro-platform">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 4.2 11 3v8H2zm10  -1.3 10-1.4V11H12zM2 12h9v8.1L2 18.8zm10 0h10v9.4l-10-1.4z"/></svg>
+        <span class="intro-platform-name">Windows</span><span class="intro-platform-state available" data-i18n="introWin">ДОСТУПНО</span>
+      </div>
+      <div class="intro-platform">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.7"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+        <span class="intro-platform-name">Android</span><span class="intro-platform-state upcoming" data-i18n="introAndroid">В РАЗРАБОТКЕ</span>
+      </div>
+    </div>
+    <div class="intro-actions">
+      <button class="btn solid" id="introContinue" type="button"><span data-i18n="introContinue">ПРОДОЛЖИТЬ НА САЙТ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+    </div>
+    <p class="intro-footnote">NEXUS BROWSER // NEXT PLATFORM IN PROGRESS</p>
+  </div>
+</div>
+
+<script>
+/* Мобильное предупреждение работает независимо от Firebase. */
+(function () {
+  const mobileMode = !!window.nexusMobileMode;
+  const intro = document.getElementById('mobileIntro');
+  const download = document.getElementById('downloadBtn');
+
+  // Основной сайт виден даже при недоступном Firebase CDN.
+  window.addEventListener('load', () => document.body.classList.add('loaded'), { once: true });
+
+  if (mobileMode) {
+    download.disabled = true;
+    download.setAttribute('aria-disabled', 'true');
+  }
+  intro.setAttribute('aria-hidden', String(!document.documentElement.classList.contains('show-mobile-intro')));
+
+  document.getElementById('introContinue').addEventListener('click', () => {
+    document.documentElement.classList.remove('show-mobile-intro');
+    intro.setAttribute('aria-hidden', 'true');
+    try { sessionStorage.setItem('nexus_mobile_notice_seen', '1'); } catch (e) { /* private mode */ }
+  });
+})();
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
@@ -741,7 +947,8 @@ const I18N = {
     errCred:'Неверный логин или пароль', errUnverified:'ПОЧТА НЕ ПОДТВЕРЖДЕНА. ПРОВЕРЬТЕ ВХОДЯЩИЕ.',
     successReg:'УСПЕШНО! ПИСЬМО С ПОДТВЕРЖДЕНИЕМ ОТПРАВЛЕНО.',
     dlRequired:'ДЛЯ ЗАГРУЗКИ ТРЕБУЕТСЯ АВТОРИЗАЦИЯ',
-    statusVerified:'ДОСТУП РАЗРЕШЕН', statusUnverified:'ПОЧТА НЕ ПОДТВЕРЖДЕНА' },
+    statusVerified:'ДОСТУП РАЗРЕШЕН', statusUnverified:'ПОЧТА НЕ ПОДТВЕРЖДЕНА',
+    mobileDownload:'ДЛЯ ТЕЛЕФОНОВ — В РАЗРАБОТКЕ', mobileDownloadNote:'Версия NeXus для Android разрабатывается. Пока браузер доступен только на Windows.', introEyebrow:'СТАТУС МОБИЛЬНОЙ ВЕРСИИ', introTitle:'ПОКА ТОЛЬКО', introTitleLine:'НА WINDOWS.', introDesc:'NeXus Browser сейчас доступен для компьютеров с Windows. Мы уже разрабатываем версию для Android — пока можно ознакомиться с сайтом и его возможностями.', introWin:'ДОСТУПНО', introAndroid:'В РАЗРАБОТКЕ', introContinue:'ПРОДОЛЖИТЬ НА САЙТ' },
   en: { badge:'BUILD V14.19 — STABLE', t1:'ABSOLUTE', t2:'PURITY.',
     desc:'A browser engineered to eliminate digital noise. Native AdBlock, sponsor bypass and zero telemetry at the core.',
     download:'DOWNLOAD FOR WINDOWS', support:'SUPPORT', login:'SIGN IN', modules:'SYSTEM MODULES',
@@ -760,7 +967,8 @@ const I18N = {
     errCred:'Invalid credentials', errUnverified:'EMAIL NOT VERIFIED. CHECK YOUR INBOX.',
     successReg:'SUCCESS! VERIFICATION EMAIL SENT.',
     dlRequired:'AUTHORIZATION REQUIRED TO DOWNLOAD',
-    statusVerified:'ACCESS GRANTED', statusUnverified:'EMAIL NOT VERIFIED' },
+    statusVerified:'ACCESS GRANTED', statusUnverified:'EMAIL NOT VERIFIED',
+    mobileDownload:'MOBILE VERSION — IN DEVELOPMENT', mobileDownloadNote:'NeXus for Android is in development. The browser is currently available on Windows only.', introEyebrow:'MOBILE PLATFORM STATUS', introTitle:'WINDOWS', introTitleLine:'ONLY. FOR NOW.', introDesc:'NeXus Browser is currently available on Windows PCs. The Android version is in development — meanwhile, explore the website and its features.', introWin:'AVAILABLE', introAndroid:'IN DEVELOPMENT', introContinue:'EXPLORE WEBSITE' },
   de: { badge:'BUILD V14.19 — STABIL', t1:'ABSOLUTE', t2:'REINHEIT.',
     desc:'Ein Browser, der digitales Rauschen eliminiert. Nativer AdBlock, Sponsor-Bypass und keine Telemetrie im Kern.',
     download:'FÜR WINDOWS LADEN', support:'UNTERSTÜTZEN', login:'ANMELDEN', modules:'SYSTEMMODULE',
@@ -779,7 +987,8 @@ const I18N = {
     errCred:'Ungültige Anmeldedaten', errUnverified:'E-MAIL NICHT VERIFIZIERT. ÜBERPRÜFEN SIE IHRE INBOX.',
     successReg:'ERFOLG! BESTÄTIGUNGS-E-MAIL GESENDET.',
     dlRequired:'AUTORISIERUNG ERFORDERLICH ZUM HERUNTERLADEN',
-    statusVerified:'ZUGRIFF GEWÄHRT', statusUnverified:'E-MAIL NICHT VERIFIZIERT' }
+    statusVerified:'ZUGRIFF GEWÄHRT', statusUnverified:'E-MAIL NICHT VERIFIZIERT',
+    mobileDownload:'MOBILE VERSION — IN ENTWICKLUNG', mobileDownloadNote:'NeXus für Android wird entwickelt. Aktuell ist der Browser nur für Windows verfügbar.', introEyebrow:'MOBILVERSION — STATUS', introTitle:'DERZEIT NUR', introTitleLine:'FÜR WINDOWS.', introDesc:'NeXus Browser ist derzeit für Windows-PCs verfügbar. Die Android-Version ist in Entwicklung. Bis dahin kannst du die Website und ihre Funktionen kennenlernen.', introWin:'VERFÜGBAR', introAndroid:'IN ENTWICKLUNG', introContinue:'WEBSITE ANSEHEN' }
 };
 
 let lang = localStorage.getItem('nexus_lang') || 'ru';
@@ -974,7 +1183,7 @@ function updateAuthUI() {
     loginBtn.classList.add('logged-in');
     loginBtn.textContent = name.toUpperCase();
     loginBtn.removeAttribute('data-i18n');
-    downloadBtn.classList.remove('disabled');
+    downloadBtn.classList.toggle('disabled', !!window.nexusMobileMode);
 
     // Бета-кнопка только для yaroslav.tazo@mail.ru
     if (user.email.toLowerCase() === BETA_EMAIL.toLowerCase()) {
@@ -996,6 +1205,7 @@ onAuthStateChanged(auth, updateAuthUI);
 /* СТАБИЛЬНАЯ ВЕРСИЯ */
 downloadBtn.addEventListener('click', e => {
   e.preventDefault();
+  if (window.nexusMobileMode) return;
   if (auth.currentUser && auth.currentUser.emailVerified) {
     const label = downloadBtn.querySelector('[data-i18n]');
     const bar = document.getElementById('dlBar');
@@ -1017,7 +1227,7 @@ downloadBtn.addEventListener('click', e => {
 betaBtn.addEventListener('click', e => {
   e.preventDefault();
   const user = auth.currentUser;
-  if (!user || !user.emailVerified || user.email.toLowerCase() !== BETA_EMAIL.toLowerCase()) return;
+  if (window.nexusMobileMode || !user || !user.emailVerified || user.email.toLowerCase() !== BETA_EMAIL.toLowerCase()) return;
 
   const label = betaBtn.querySelector('span:not(.bar)');
   const bar = document.getElementById('betaBar');
@@ -1096,7 +1306,7 @@ addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', sy > 40);
 }, { passive: true });
 
-(function frame() {
+function frame() {
   gx = lerp(gx, mx, .08); gy = lerp(gy, my, .08);
   glow.style.transform = `translate(${gx}px, ${gy}px) translate(-50%,-50%)`;
   csy = lerp(csy, sy, .1);
@@ -1110,7 +1320,8 @@ addEventListener('scroll', () => {
     c.style.setProperty('--my', c._y + '%');
   });
   requestAnimationFrame(frame);
-})();
+}
+if (!matchMedia('(pointer: coarse)').matches) requestAnimationFrame(frame);
 
 applyLang(lang);
 addEventListener('load', () => {
